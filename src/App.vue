@@ -1,22 +1,31 @@
 <script lang="ts">
-import { reactive, ref, watchEffect } from "vue";
-
-export default {
-  setup() {
-    const count = ref(0);
-    watchEffect(() => {
-        console.log(count.value);
-    });
+import { ComponentPublicInstance, defineComponent, onMounted, reactive, ref, watchEffect, h} from "vue";
+import Overlay from './overlay/overlay.vue';
+export default defineComponent({
+  components: {
+    Overlay,
+  },
+  setup(props, context) {
+    const overlayRef = ref();
 
     return {
-      count
+      overlayRef,
     }
+  },
+  mounted() {
+    console.log(this.overlayRef);
+    this.overlayRef
+    // this.overlayRef
+    // (this.$root.$el as Element).appendChild();
   }
-}
+});
 
 </script>
 
 <template>
-  <div>{{ count }}</div>
+  <div>{{count}}</div>
+  <template ref="overlayRef">
+    <overlay></overlay>
+  </template>
 </template>
 
