@@ -1,7 +1,13 @@
-<template></template>
+<template>
+  <div>
+    <test />
+  </div>
+</template>
 
-<script lang="ts">
+<script>
+import Test from "./components/Test.vue";
 export default {
-  name: "App",
+  name: "app",
+  components: { Test },
 };
 </script>
