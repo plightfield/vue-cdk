@@ -1,6 +1,8 @@
 import {Teleport, defineComponent, CSSProperties, SetupContext, renderSlot, watchEffect } from 'vue';
 
 export class OverlayEntry {
+  show: boolean = false;
+
   constructor(private builder: () => ReturnType<typeof defineComponent>) {
   }
 
@@ -16,12 +18,12 @@ export class OverlayEntry {
     const componentRef = new (this.builder())();
     return defineComponent((_, ctx: SetupContext) => {
       const click = () => {
-        const closed = ;
+        // const closed = ;
         // default is true   
-        const enabled = closed === undefined ? true : closed;
-        if (enabled) {
+        // const enabled = closed === undefined ? true : closed;
+        // if (enabled) {
           ctx.emit('showChanged', false);
-        }
+        // }
       };
 
       watchEffect(() => {
@@ -36,7 +38,7 @@ export class OverlayEntry {
           width: '100%',
           height: '100%',
           background: 'rgba(0,0,0,0.4)',
-          display: props.show ? 'block' : 'none',
+          display: this.show ? 'block' : 'none',
         };
         const positionedStyle:CSSProperties = {
           position: 'relative',
