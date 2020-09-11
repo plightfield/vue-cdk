@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.19",
+    "@types/lodash": "^4.14.161",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
@@ -21,6 +22,7 @@
     "@vue/test-utils": "^2.0.0-0",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
+    "lodash": "^4.17.20",
     "typescript": "~3.9.3",
     "vue-jest": "^5.0.0-0"
   }
