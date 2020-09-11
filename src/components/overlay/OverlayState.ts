@@ -1,15 +1,13 @@
-import {VNode, Component, ComponentPublicInstance} from 'vue';
-export interface OverlayConfig {
-  width?: string,
-  height?: string,
-}
+import {h, Teleport, defineComponent} from 'vue';
+import { OverlayProps } from './OverlayProps';
 
 export class OverlayState {
 
-  constructor(config?: OverlayConfig) {}
+  constructor(private config?: OverlayProps) {
+  }
 
-  build(component: Component) {
-    // this.container
+  insert(componentConstructor: ReturnType<typeof defineComponent>) {
+    const component = new componentConstructor();
   }
 }
 

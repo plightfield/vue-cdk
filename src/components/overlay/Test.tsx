@@ -12,11 +12,11 @@ const Test = defineComponent(() => {
   const update = (value: boolean) => {
     showRef.value = value;
   }
-  
+
   return () => (
     <>
       <button onClick={click}>click me</button>
-      <Overlay show={showRef.value} onUpdateShow={update}>
+      <Overlay show={showRef.value} onShowChanged={update}>
         {() => (<div>'this is test'</div>)}
       </Overlay>
     </>

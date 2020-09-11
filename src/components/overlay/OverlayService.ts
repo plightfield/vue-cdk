@@ -1,4 +1,4 @@
-import { Component, InjectionKey, App } from "vue";
+import { Component, InjectionKey, App, SetupContext, ComponentPublicInstance } from "vue";
 import { OverlayConfig, OverlayState } from "./OverlayState";
 
 export class OverlayService {
@@ -6,11 +6,8 @@ export class OverlayService {
   
   static overlayContainer?: HTMLDivElement;
 
-
-  portalContainer: Component;
-
   constructor(private appRef: App) {
-    // this.portalContainer = Portal;
+    appRef._container
   }
 
   create(config?: OverlayConfig): OverlayState {

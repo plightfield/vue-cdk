@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
-import App from './App.vue'
-import './index.css'
+import App from './App.vue';
+import {overlay} from './components/overlay';
+import './index.css';
 
-createApp(App).mount('#app')
+createApp(App).use(overlay).mount('#app')
