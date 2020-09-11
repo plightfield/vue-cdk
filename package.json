@@ -6,7 +6,11 @@
     "build": "vite build"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "typescript": "^4.0.2",
+=======
     "async-validator": "^3.4.0",
+>>>>>>> source/master
     "vue": "^3.0.0-rc.1"
   },
   "devDependencies": {
