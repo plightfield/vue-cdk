@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script lang="ts">
 import { ComponentPublicInstance, defineComponent, onMounted, reactive, ref, watchEffect, h} from "vue";
 import Overlay from './overlay/overlay.vue';
@@ -29,3 +30,19 @@ export default defineComponent({
   </template>
 </template>
 
+=======
+<template>
+  <div>
+    <Test />
+  </div>
+</template>
+
+<script>
+import Test from "./components/Test.tsx";
+export default {
+  name: "app",
+  components: { Test },
+  setup(_, ctx) {},
+};
+</script>
+>>>>>>> source/master
