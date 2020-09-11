@@ -1,5 +1,5 @@
-// Vue3 now don't have many way to test
-// use example to avoid
+// !!Vue3 now don't have many way to test
+// !!use example to avoid
 import {
   defineComponent,
   InjectionKey,
