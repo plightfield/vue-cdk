@@ -1,70 +1,61 @@
 // !!Vue3 now don't have many way to test
 // !!use example to avoid
-import {
-  defineComponent,
-  InjectionKey,
-  renderSlot,
-  isRef,
-  nextTick,
-} from "vue";
-import { mount } from "@vue/test-utils";
-import {
-  AccrossingDataRoot,
-  AccrossingData,
-} from "../../lib/core/AcrossingData";
-import { indexOf } from "lodash";
+import { defineComponent, InjectionKey, renderSlot, isRef, nextTick } from 'vue'
+import { mount } from '@vue/test-utils'
+import { AccrossingDataRoot, AccrossingData } from '../../lib/core/PassingData'
+import { indexOf } from 'lodash'
 
 interface DataType {
-  test: string;
-  name: string;
+  test: string
+  name: string
 }
-const dataToken: InjectionKey<DataType> = Symbol();
+const dataToken: InjectionKey<DataType> = Symbol()
 
-const TestRoot = defineComponent(function (_, ctx) {
+const TestRoot = defineComponent(function(_, ctx) {
   const root = new AccrossingDataRoot<DataType>(
-    { test: "", name: "shit" },
+    { test: '', name: 'shit' },
     dataToken
-  );
+  )
   return () => (
     <div>
-      <input id='testRoot' value={root.model.value.name} />
-      {renderSlot(ctx.slots, "default")}
+      <input id="testRoot" value={root.model.value.name} />
+      {renderSlot(ctx.slots, 'default')}
     </div>
-  );
-});
+  )
+})
 
-const TestChild = defineComponent(function (props: { name: string }, ctx) {
-  const child = new AccrossingData<DataType>(props.name, dataToken);
+const TestChild = defineComponent(function(props: { name: string }, ctx) {
+  const child = new AccrossingData<DataType>(props.name, dataToken)
   return () => (
     <div>
       <input
-        class={props.name === "test" ? "" : "testChild"}
+        class={props.name === 'test' ? '' : 'testChild'}
         value={child.model}
         onInput={(e: any) => (child.model = e.target.value)}
       />
-      {renderSlot(ctx.slots, "default")}
+      {renderSlot(ctx.slots, 'default')}
     </div>
-  );
-});
-TestChild.props = ["name"];
+  )
+})
+TestChild.props = ['name']
 
-const Test = defineComponent(function () {
+const Test = defineComponent(function() {
   return () => (
     <TestRoot>
       {() => (
         <>
-          <TestChild name='test'></TestChild>
-          <TestChild name='name'></TestChild>
+          <TestChild name="test"></TestChild>
+          <TestChild name="name"></TestChild>
         </>
       )}
     </TestRoot>
-  );
-});
+  )
+})
 
-let instance: any;
+let instance: any
 beforeEach(() => {
-  instance = mount(Test);
-});
+  instance = mount(Test)
+})
 
 // it("will get all data", () => {
 //   console.log(instance.find("#testRoot").element.value);
