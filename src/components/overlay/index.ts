@@ -1,7 +1,8 @@
 
-import { App } from "vue";
+import { App, provide } from "vue";
 import { OverlayService } from "./OverlayService";
 
+let overlayContainer: HTMLElement;
 export const overlay = {
   install(app: App, ...options: any[]) {
     // only once
@@ -12,6 +13,6 @@ export const overlay = {
       document.body.append(div);
       OverlayService.overlayContainer = div;
     }
-    app.provide(OverlayService.key, new OverlayService(app));
+    provide(OverlayService.key, new OverlayService());
   }
 }

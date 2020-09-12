@@ -1,27 +1,28 @@
 
-import { defineComponent, ref } from "vue";
-import Overlay from "./Overlay";
+import { defineComponent, ref, inject } from "vue";
+import { GlobalPositionStrategy } from "./position/GlobalPositionStrategy";
+import {OverlayService} from './OverlayService'
+const Test = defineComponent({
+  setup() {
+    const service = inject(OverlayService.key);
 
+    const strategy = new GlobalPositionStrategy().centerHorizontally().centerVertically();
+    const overlayRef = service.create({strategy, backdropClose: true});
+    const Overlay = overlayRef.overlay;
 
-const Test = defineComponent(() => {
-  const showRef = ref(false);
-  const click = () => {
-    showRef.value = true;
+    const click = () => {
+      overlayRef.attach();
+    }
+
+    return () => (
+      <>
+        <button onClick={click}>click me</button>
+        <Overlay>
+          {() => (<div>'this is test'</div>)}
+        </Overlay>
+      </>
+    );
   }
-
-  const update = (value: boolean) => {
-    showRef.value = value;
-  }
-
-  return () => (
-    <>
-      <button onClick={click}>click me</button>
-      <Overlay show={showRef.value} onShowChanged={update}>
-        {() => (<div>'this is test'</div>)}
-      </Overlay>
-    </>
-  
-  );
 });
 
 export default Test;

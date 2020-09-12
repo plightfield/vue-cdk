@@ -1,10 +1,6 @@
 import { CSSProperties } from "vue";
-
-interface OverlayStyleProps {
-  style: CSSProperties;
-  parentStyle: CSSProperties;
-}
+import { OverlayProps } from '../OverlayProps';
 
 export interface PositionStrategy {
-  setup(): OverlayStyleProps;
+  setup(): OverlayProps;
 }

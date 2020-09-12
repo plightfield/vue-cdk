@@ -1,4 +1,6 @@
+import { CSSProperties } from "vue";
+
 export interface OverlayProps {
-  width?: string,
-  height?: string,
+  style: CSSProperties;
+  parentStyle: CSSProperties;
 }
