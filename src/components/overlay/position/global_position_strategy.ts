@@ -12,7 +12,6 @@ export class GlobalPositionStrategy implements PositionStrategy {
   private _justifyContent: string = '';
   private _width: string = '';
   private _height: string = '';
-  // private _isDisposed: boolean;
 
   /**
    * Sets the top position of the overlay. Clears any previously set vertical position.
@@ -109,7 +108,15 @@ export class GlobalPositionStrategy implements PositionStrategy {
    * 
    */
   setup() {
-    const style: CSSProperties = {};
+    const style: CSSProperties = {
+      width: this._width,
+      height: this._height,
+      position: this._cssPosition,
+      marginLeft: this._leftOffset,
+      marginRight: this._rightOffset,
+      marginTop: this._topOffset,
+      marginBottom: this._bottomOffset,
+    };
     const parentStyle: CSSProperties = {
       top: 0,
       left: 0,
@@ -117,34 +124,11 @@ export class GlobalPositionStrategy implements PositionStrategy {
       height: '100%',
       background: 'rgba(0, 0, 0, 0.4)',
       position: 'fixed',
-      display: 'flex'
+      display: 'flex',
+      justifyContent: this._justifyContent,
+      alignItems: this._alignItems,
     };
-
-    let width = '';
-    let height = '';
-    let maxWidth = '';
-    let maxHeight = '';
-    const shouldBeFlushHorizontally = (width === '100%' || width === '100vw') &&
-                                      (!maxWidth || maxWidth === '100%' || maxWidth === '100vw');
-    const shouldBeFlushVertically = (height === '100%' || height === '100vh') &&
-                                    (!maxHeight || maxHeight === '100%' || maxHeight === '100vh');
-
-    style.position = this._cssPosition;
-    style.marginLeft = shouldBeFlushHorizontally ? '0' : this._leftOffset;
-    style.marginTop = shouldBeFlushVertically ? '0' : this._topOffset;
-    style.marginBottom = this._bottomOffset;
-    style.marginRight = this._rightOffset;
-
-    if (shouldBeFlushHorizontally) {
-      parentStyle.justifyContent = 'flex-start';
-    } else if (this._justifyContent === 'center') {
-      parentStyle.justifyContent = 'center';
-    } else {
-      parentStyle.justifyContent = this._justifyContent;
-    }
-
-    parentStyle.alignItems = shouldBeFlushVertically ? 'flex-start' : this._alignItems;
-
+    
     return {
       style,
       parentStyle,
