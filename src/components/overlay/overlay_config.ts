@@ -1,4 +1,4 @@
-import { PositionStrategy } from "./position/PosotionStrategy";
+import { PositionStrategy } from "./position/position_strategy";
 
 export interface OverlayConfig {
     strategy?: PositionStrategy;

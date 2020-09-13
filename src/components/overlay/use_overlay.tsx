@@ -1,5 +1,5 @@
-import {Teleport, defineComponent, SetupContext, renderSlot, watchEffect, ref, watch } from 'vue';
-import { PositionStrategy } from './position/PosotionStrategy';
+import {Teleport, defineComponent, SetupContext, renderSlot, ref } from 'vue';
+import { PositionStrategy } from './position/position_strategy';
 
 export const useOverlay = (strategy: PositionStrategy, backdropClose: boolean) => {
   const show = ref(false);

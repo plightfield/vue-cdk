@@ -1,6 +1,6 @@
 import { Component, InjectionKey, App, SetupContext, ComponentPublicInstance } from "vue";
-import { OverlayConfig } from "./OverlayConfig";
-import { OverlayState } from "./OverlayState";
+import { OverlayState } from "./overlay_state";
+import { OverlayConfig } from "./overlay_config";
 
 export class OverlayService {
   static key: InjectionKey<OverlayService> = Symbol('cdk-overlay');

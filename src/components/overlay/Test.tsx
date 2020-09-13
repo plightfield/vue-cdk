@@ -1,7 +1,7 @@
 
 import { defineComponent, ref, inject } from "vue";
-import { GlobalPositionStrategy } from "./position/GlobalPositionStrategy";
-import {OverlayService} from './OverlayService'
+import { OverlayService } from "./overlay_service";
+import { GlobalPositionStrategy } from "./position/global_position_strategy";
 const Test = defineComponent({
   setup() {
     const service = inject(OverlayService.key);

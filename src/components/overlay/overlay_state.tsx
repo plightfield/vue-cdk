@@ -1,5 +1,5 @@
 import { defineComponent, ref, SetupContext, Teleport, renderSlot } from "vue";
-import { PositionStrategy } from "./position/PosotionStrategy";
+import { PositionStrategy } from "./position/position_strategy";
 
 export class OverlayState {
   public readonly overlay: ReturnType<typeof defineComponent>;
@@ -24,7 +24,6 @@ export class OverlayState {
     const styles = this.strategy.setup();
     const originDisplay = styles.parentStyle.display;
     return defineComponent((_, ctx: SetupContext) => {
-      const innerShow = ref(false);
       const click = () => {
         if (this.backdropClose) {
           this.show.value = false;

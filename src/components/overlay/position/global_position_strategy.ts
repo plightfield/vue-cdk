@@ -1,5 +1,5 @@
 import { CSSProperties } from "vue";
-import { PositionStrategy } from "./PosotionStrategy";
+import { PositionStrategy } from "./position_strategy";
 
 
 export class GlobalPositionStrategy implements PositionStrategy {
@@ -12,7 +12,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
   private _justifyContent: string = '';
   private _width: string = '';
   private _height: string = '';
-  private _isDisposed: boolean;
+  // private _isDisposed: boolean;
 
   /**
    * Sets the top position of the overlay. Clears any previously set vertical position.
