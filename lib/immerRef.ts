@@ -1,6 +1,19 @@
-import { onBeforeUnmount, Ref, shallowRef, watch } from "vue";
+import { onBeforeUnmount, Ref, shallowRef, toRaw, watch } from "vue";
 import { set as _set } from "lodash";
 import { BehaviorSubject } from "rxjs";
+
+/**
+ * return type of immerRef
+ *
+ * @export
+ * @interface ImmerData
+ * @template T
+ */
+export interface ImmerData<T> {
+  value: T;
+  setValue: (val: any, keys?: string) => void;
+  data$: BehaviorSubject<T>;
+}
 
 /**
  * attach localstorage handler with try block
@@ -26,25 +39,19 @@ function tryJsonSet(key: string, val: any) {
  * or transform it to
  * *Rxjs BehaviroSubject
  * !notice that only first layout Array will be handled
- * other layer of array will be set to plain object
  *
  * @export
  * @template T
  * @param {T} initialValue
  * @param {string} [storageKey]
- * @param {boolean} [subscribe]
- * @returns {{value:T, setValue:(val: any, keys?: string) => void,data$: BehaviorSubject<T>}
+ * @returns {ImmerData<T>}
  */
 export default function immerRef<T>(
   initialValue: T,
-  storageKey?: string,
-  subscribe?: boolean
-): {
-  value: T;
-  setValue: (val: any, keys?: string) => void;
-  data$: BehaviorSubject<T>;
-} {
+  storageKey?: string
+): ImmerData<T> {
   const _data = shallowRef<T>(initialValue);
+  console.log(_data);
   const data$ = new BehaviorSubject<T>(initialValue);
   const setData = (val: any, keys?: string) => {
     if (keys === undefined) {
@@ -53,7 +60,7 @@ export default function immerRef<T>(
     }
     const keyList = keys.split(".").filter((res) => res);
     if (keyList.length > 0) {
-      let result = Object.assign({}, _set(_data.value as any, keyList, val));
+      let result = { ..._set(_data.value as any, keyList, val) };
       let isArray =
         Object.prototype.toString.call(initialValue) === "[object Array]";
       let haveNaNKey = false;
@@ -84,22 +91,18 @@ export default function immerRef<T>(
     });
   }
 
-  // add BehaviorSubject transformation
-  if (subscribe) {
-    data$.subscribe((res) => {
-      if (res !== _data.value) {
-        _data.value === res;
-      }
-    });
-  }
-
-  watch(_data, (val) => {
-    data$.next(val);
-  });
+  watch(
+    _data,
+    (val) => {
+      data$.next(toRaw(val));
+    },
+    { flush: "sync" }
+  );
 
   onBeforeUnmount(() => {
     data$.unsubscribe();
   });
+
   return {
     value: _data.value,
     setValue: setData,

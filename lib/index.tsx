@@ -8,6 +8,7 @@ import Test from "./Test";
 // functions
 import eventStream from "./eventStream";
 import immerRef from "./immerRef";
+import computedStream from "./computedStream";
 
 /**
  * ruled component template name
@@ -30,10 +31,12 @@ export default {
   },
   eventStream,
   immerRef,
+  computedStream,
   Test,
 };
 
 // import {xxx,xxx} from 'cdk'
 export const cdkEventStream = eventStream;
 export const cdkImmerRef = immerRef;
+export const cdkComputedStream = computedStream;
 export const CdkTest = Test;
