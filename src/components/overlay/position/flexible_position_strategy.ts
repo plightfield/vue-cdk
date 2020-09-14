@@ -75,7 +75,8 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     /** Amount by which the overlay was pushed in each axis during the last time it was positioned. */
     private _previousPushAmount: { x: number, y: number } | null;
 
-
+    private _document = window.document;
+    
     constructor(
         connectedTo: FlexibleConnectedPositionStrategyOrigin,
     ) {
@@ -432,8 +433,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
         if (position.overlayX === 'center') {
             xOrigin = 'center';
-        } else if (this._isRtl()) {
-            xOrigin = position.overlayX === 'start' ? 'right' : 'left';
         } else {
             xOrigin = position.overlayX === 'start' ? 'left' : 'right';
         }
@@ -451,7 +450,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
      */
     private _calculateBoundingBoxRect(origin: Point, position: ConnectedPosition): BoundingBoxRect {
         const viewport = this._viewportRect;
-        const isRtl = this._isRtl();
         let height: number, top: number, bottom: number;
 
         if (position.overlayY === 'top') {
@@ -477,20 +475,20 @@ export class FlexiblePositionStrategy implements PositionStrategy {
             height = smallestDistanceToViewportEdge * 2;
             top = origin.y - smallestDistanceToViewportEdge;
 
-            if (height > previousHeight && !this._isInitialRender && !this._growAfterOpen) {
+            if (height > previousHeight && !this._growAfterOpen) {
                 top = origin.y - (previousHeight / 2);
             }
         }
 
         // The overlay is opening 'right-ward' (the content flows to the right).
         const isBoundedByRightViewportEdge =
-            (position.overlayX === 'start' && !isRtl) ||
-            (position.overlayX === 'end' && isRtl);
+            (position.overlayX === 'start') ||
+            (position.overlayX === 'end');
 
         // The overlay is opening 'left-ward' (the content flows to the left).
         const isBoundedByLeftViewportEdge =
-            (position.overlayX === 'end' && !isRtl) ||
-            (position.overlayX === 'start' && isRtl);
+            (position.overlayX === 'end') ||
+            (position.overlayX === 'start');
 
         let width: number, left: number, right: number;
 
@@ -718,13 +716,7 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         // or "after" the origin, which determines the direction in which the element will expand.
         // For the horizontal axis, the meaning of "before" and "after" change based on whether the
         // page is in RTL or LTR.
-        let horizontalStyleProperty: 'left' | 'right';
-
-        if (this._isRtl()) {
-            horizontalStyleProperty = position.overlayX === 'end' ? 'left' : 'right';
-        } else {
-            horizontalStyleProperty = position.overlayX === 'end' ? 'right' : 'left';
-        }
+        const horizontalStyleProperty: 'left' | 'right' = position.overlayX === 'end' ? 'left' : 'right';
 
         // When we're setting `right`, we adjust the x position such that it is the distance
         // from the right edge of the viewport rather than the left edge.
@@ -738,29 +730,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         return styles;
     }
 
-    /**
-     * Gets the view properties of the trigger and overlay, including whether they are clipped
-     * or completely outside the view of any of the strategy's scrollables.
-     */
-    private _getScrollVisibility(): ScrollingVisibility {
-        // Note: needs fresh rects since the position could've changed.
-        const originBounds = this._getOriginRect();
-        const overlayBounds = this._pane.getBoundingClientRect();
-
-        // TODO(jelbourn): instead of needing all of the client rects for these scrolling containers
-        // every time, we should be able to use the scrollTop of the containers if the size of those
-        // containers hasn't changed.
-        const scrollContainerBounds = this._scrollables.map(scrollable => {
-            return scrollable.getElementRef().nativeElement.getBoundingClientRect();
-        });
-
-        return {
-            isOriginClipped: isElementClippedByScrolling(originBounds, scrollContainerBounds),
-            isOriginOutsideView: isElementScrolledOutsideView(originBounds, scrollContainerBounds),
-            isOverlayClipped: isElementClippedByScrolling(overlayBounds, scrollContainerBounds),
-            isOverlayOutsideView: isElementScrolledOutsideView(overlayBounds, scrollContainerBounds),
-        };
-    }
 
     /** Subtracts the amount that an element is overflowing on an axis from its length. */
     private _subtractOverflows(length: number, ...overflows: number[]): number {
