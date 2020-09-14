@@ -1,8 +1,8 @@
-import { defineComponent, watch } from "vue";
-import immerRef from "../lib/immerRef";
+import { defineComponent } from "vue";
+import { cdkImmerRef } from "../lib";
 
 const App = defineComponent(function () {
-  const { value, setValue, data$ } = immerRef({ test: 1 }, "fuck", true);
+  const { value, setValue, data$ } = cdkImmerRef({ test: 1 }, "fuck", true);
   data$.subscribe(console.log);
   return () => (
     <div>
@@ -12,6 +12,7 @@ const App = defineComponent(function () {
           setValue(e.target.value, "test");
         }}
       />
+      <button>testsetstset</button>
     </div>
   );
 });

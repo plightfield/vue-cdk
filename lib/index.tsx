@@ -1,15 +1,39 @@
-import { Plugin } from "vue";
-
+// ! no mixin
+// ! no directive
+// ! no filter
+// ! cdk should not have any of upper cases
+// components
 import Test from "./Test";
 
+// functions
+import eventStream from "./eventStream";
+import immerRef from "./immerRef";
+
+/**
+ * ruled component template name
+ *
+ * @param {*} app
+ * @param {any[]} components
+ */
 function injectComponents(app: any, components: any[]) {
   for (let component of components) {
     app.component("cdk-" + component.displayName, component);
   }
 }
 
+// default export
+// import cdk from 'cdk'
+// *cdx.xxx Cdk.XXX
 export default {
-  install(app, options) {
+  install(app: any, options: any) {
     injectComponents(app, [Test]);
   },
-} as Plugin;
+  eventStream,
+  immerRef,
+  Test,
+};
+
+// import {xxx,xxx} from 'cdk'
+export const cdkEventStream = eventStream;
+export const cdkImmerRef = immerRef;
+export const CdkTest = Test;
