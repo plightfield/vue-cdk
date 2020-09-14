@@ -9,6 +9,7 @@
   "dependencies": {
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
+    "good-listener": "^1.2.2",
     "vue": "^3.0.0-10"
   },
   "devDependencies": {
