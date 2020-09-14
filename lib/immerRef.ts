@@ -18,6 +18,7 @@ function tryJsonSet(key: string, val: any) {
   localStorage.setItem(key, result);
 }
 
+
 /**
  * implements ref with
  * *immutable state
@@ -30,15 +31,18 @@ function tryJsonSet(key: string, val: any) {
  *
  * @export
  * @template T
- * @param {T} value
- * @returns {[Ref<T>, (val: any, keys?: string) => void , BehaviorSubject<T>]}
+ * @param {T} initialValue
+ * @param {string} [storageKey]
+ * @param {boolean} [subscribe]
+ * @returns {{value:T, setValue:(val: any, keys?: string) => void,data$: BehaviorSubject<T>}
  */
 export default function immerRef<T>(
-  value: T,
-  storageKey?: string
-): [Ref<T>, (val: any, keys?: string) => void, BehaviorSubject<T>] {
-  const _data = shallowRef<T>(value);
-  const data$ = new BehaviorSubject<T>(value);
+  initialValue: T,
+  storageKey?: string,
+  subscribe?: boolean
+): {value:T, setValue:(val: any, keys?: string) => void,data$: BehaviorSubject<T> {
+  const _data = shallowRef<T>(initialValue);
+  const data$ = new BehaviorSubject<T>(initialValue);
   const setData = (val: any, keys?: string) => {
     if (keys === undefined) {
       _data.value = val;
@@ -47,7 +51,7 @@ export default function immerRef<T>(
     const keyList = keys.split(".").filter((res) => res);
     if (keyList.length > 0) {
       let result = Object.assign({}, _set(_data.value as any, keyList, val));
-      let isArray = Object.prototype.toString.call(value) === "[object Array]";
+      let isArray = Object.prototype.toString.call(initialValue) === "[object Array]";
       let haveNaNKey = false;
       if (isArray) {
         let len = 0;
@@ -77,6 +81,14 @@ export default function immerRef<T>(
   }
 
   // add BehaviorSubject transformation
+  if (subscribe) {
+    data$.subscribe((res) => {
+      if (res !== _data.value) {
+        _data.value === res;
+      }
+    });
+  }
+
   watch(_data, (val) => {
     data$.next(val);
   });
@@ -84,5 +96,9 @@ export default function immerRef<T>(
   onBeforeUnmount(() => {
     data$.unsubscribe();
   });
-  return [_data, setData, data$];
+  return {
+    value: _data.value,
+    setValue: setData,
+    data$,
+  };
 }

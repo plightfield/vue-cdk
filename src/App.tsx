@@ -2,15 +2,14 @@ import { defineComponent, watch } from "vue";
 import immerRef from "../lib/immerRef";
 
 const App = defineComponent(function () {
-  const [some, setSome] = immerRef({ test: 1 }, "fuck");
-
-  watch(some, console.log);
+  const { value, setValue, data$ } = immerRef({ test: 1 }, "fuck", true);
+  data$.subscribe(console.log);
   return () => (
     <div>
       <input
-        value={some.value.test}
+        value={value.test}
         onInput={(e: any) => {
-          setSome(e.target.value, "test");
+          setValue(e.target.value, "test");
         }}
       />
     </div>
