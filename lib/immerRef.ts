@@ -18,7 +18,6 @@ function tryJsonSet(key: string, val: any) {
   localStorage.setItem(key, result);
 }
 
-
 /**
  * implements ref with
  * *immutable state
@@ -40,7 +39,11 @@ export default function immerRef<T>(
   initialValue: T,
   storageKey?: string,
   subscribe?: boolean
-): {value:T, setValue:(val: any, keys?: string) => void,data$: BehaviorSubject<T> {
+): {
+  value: T;
+  setValue: (val: any, keys?: string) => void;
+  data$: BehaviorSubject<T>;
+} {
   const _data = shallowRef<T>(initialValue);
   const data$ = new BehaviorSubject<T>(initialValue);
   const setData = (val: any, keys?: string) => {
@@ -51,7 +54,8 @@ export default function immerRef<T>(
     const keyList = keys.split(".").filter((res) => res);
     if (keyList.length > 0) {
       let result = Object.assign({}, _set(_data.value as any, keyList, val));
-      let isArray = Object.prototype.toString.call(initialValue) === "[object Array]";
+      let isArray =
+        Object.prototype.toString.call(initialValue) === "[object Array]";
       let haveNaNKey = false;
       if (isArray) {
         let len = 0;
