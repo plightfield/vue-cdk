@@ -1,6 +1,14 @@
-import { onBeforeUnmount, Ref, shallowRef, toRaw, watch } from "vue";
+import { computed, onBeforeUnmount, Ref, shallowRef, toRaw, watch } from "vue";
 import { set as _set } from "lodash";
-import { BehaviorSubject } from "rxjs";
+import {
+  asapScheduler,
+  asyncScheduler,
+  Observable,
+  queueScheduler,
+  Subject,
+  animationFrameScheduler,
+} from "rxjs";
+import { observeOn } from "rxjs/operators";
 
 /**
  * return type of immerRef
@@ -12,7 +20,7 @@ import { BehaviorSubject } from "rxjs";
 export interface ImmerData<T> {
   value: T;
   setValue: (val: any, keys?: string) => void;
-  data$: BehaviorSubject<T>;
+  data$: Observable<T>;
 }
 
 /**
@@ -51,8 +59,6 @@ export default function immerRef<T>(
   storageKey?: string
 ): ImmerData<T> {
   const _data = shallowRef<T>(initialValue);
-  console.log(_data);
-  const data$ = new BehaviorSubject<T>(initialValue);
   const setData = (val: any, keys?: string) => {
     if (keys === undefined) {
       _data.value = val;
@@ -76,8 +82,9 @@ export default function immerRef<T>(
         result.length = len;
       }
       // *if initial value is array and dont have nan key
-      _data.value =
+      result =
         isArray && !haveNaNKey ? Array.prototype.slice.call(result) : result;
+      _data.value = result;
     } else {
       _data.value = val;
     }
@@ -91,16 +98,17 @@ export default function immerRef<T>(
     });
   }
 
-  watch(
-    _data,
-    (val) => {
-      data$.next(toRaw(val));
-    },
-    { flush: "sync" }
-  );
-
-  onBeforeUnmount(() => {
-    data$.unsubscribe();
+  const data$ = new Observable<T>((observer) => {
+    watch(
+      _data,
+      (val) => {
+        observer.next(val);
+      },
+      { immediate: true, flush: "sync" }
+    );
+    onBeforeUnmount(() => {
+      observer.complete();
+    });
   });
 
   return {

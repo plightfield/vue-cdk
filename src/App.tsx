@@ -12,7 +12,7 @@ const App = defineComponent(function () {
           setValue(e.target.value, "test");
         }}
       />
-      <button>{buttonText?.test}</button>
+      <button>{buttonText.value?.test}</button>
     </div>
   );
 });
