@@ -4,7 +4,7 @@ import { PositionStrategy } from './position/position_strategy';
 export const useOverlay = (strategy: PositionStrategy, backdropClose: boolean) => {
   const show = ref(false);
   const styles = strategy.setup();
-  const originDisplay = styles.parentStyle.display;
+  const originDisplay = styles.containerStyle.display;
   const overlay = defineComponent({
     setup(_, ctx: SetupContext) {
       const innerShow = ref(false);
@@ -15,8 +15,8 @@ export const useOverlay = (strategy: PositionStrategy, backdropClose: boolean) =
       };
 
       return () => {
-        const containerStyle = {...styles.parentStyle};
-        const positionedStyle = {...styles.style};
+        const containerStyle = {...styles.containerStyle};
+        const positionedStyle = {...styles.positionedStyle};
         containerStyle.display = show.value ? originDisplay : 'none';
         return (
           <Teleport to="#vue-cdk-overlay">

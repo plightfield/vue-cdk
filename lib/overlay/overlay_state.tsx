@@ -22,7 +22,7 @@ export class OverlayState {
 
   render(): ReturnType<typeof defineComponent> {
     const styles = this.strategy.setup();
-    const originDisplay = styles.parentStyle.display;
+    const originDisplay = styles.containerStyle.display;
     return defineComponent<undefined>((_, ctx: SetupContext) => {
       const click = () => {
         if (this.backdropClose) {
@@ -31,9 +31,10 @@ export class OverlayState {
       };
 
       return () => {
-        const containerStyle = {...styles.parentStyle};
-        const positionedStyle = {...styles.style};
+        const containerStyle = {...styles.containerStyle};
+        const positionedStyle = {...styles.positionedStyle};
         containerStyle.display = this.show.value ? originDisplay : 'none';
+
         return (
           <Teleport to="#vue-cdk-overlay">
             <div style={containerStyle} onClick={click}>

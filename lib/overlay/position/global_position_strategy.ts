@@ -118,7 +118,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
    * @returns OverlayProps
    */
   setup(): OverlayProps {
-    const style: CSSProperties = {
+    const positionedStyle: CSSProperties = {
       width: this._width,
       height: this._height,
       position: this._cssPosition,
@@ -127,7 +127,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
       marginTop: this._topOffset,
       marginBottom: this._bottomOffset,
     };
-    const parentStyle: CSSProperties = {
+    const containerStyle: CSSProperties = {
       top: 0,
       left: 0,
       width: '100%',
@@ -140,8 +140,8 @@ export class GlobalPositionStrategy implements PositionStrategy {
     };
     
     return {
-      style,
-      parentStyle,
+      containerStyle,
+      positionedStyle,
     };
   }
 }

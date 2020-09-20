@@ -44,3 +44,5 @@ export class ConnectionPositionPair {
       this.overlayY = overlay.overlayY;
     }
   }
+}
+

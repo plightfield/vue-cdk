@@ -1,6 +1,124 @@
+import { OverlayProps } from "../overlay_props";
+import { ConnectionPositionPair } from "./position_pair";
+import { PositionStrategy } from "./position_strategy";
+import {coerceCssPixelValue} from '../../coercion';
+interface Point {
+  x: number;
+  y: number;
+}
+
+export type FlexibleConnectedPositionStrategyOrigin = Element | Point & {
+  width?: number;
+  height?: number;
+};
+
+export interface ConnectedPosition {
+  originX: 'start' | 'center' | 'end';
+  originY: 'top' | 'center' | 'bottom';
+
+  overlayX: 'start' | 'center' | 'end';
+  overlayY: 'top' | 'center' | 'bottom';
+
+  weight?: number;
+  offsetX?: number;
+  offsetY?: number;
+  panelClass?: string | string[];
+}
+
+export class FlexiblePositionStrategy implements PositionStrategy {
+
+  // private width: string;
+
+  // private height: string;
+
+  /** Ordered list of preferred positions, from most to least desirable. */
+  // _preferredPositions: ConnectionPositionPair[] = [];
+
+  constructor(
+    private origin: FlexibleConnectedPositionStrategyOrigin
+  ) { }
+
+  setup(): OverlayProps {
+    const originRect = this._getOriginRect();
+
+    // this._getOriginPoint(originRect, position);
+    console.log(originRect);
+    return {
+      positionedStyle: {
+        position: "absolute",
+        top: coerceCssPixelValue(originRect.top),
+        left: coerceCssPixelValue(originRect.left),
+        width: coerceCssPixelValue(originRect.width),
+        height: coerceCssPixelValue(originRect.height),
+      },
+      containerStyle: {
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh'
+      }
+    }
+  }
+
+
+  setOrigin(origin: FlexibleConnectedPositionStrategyOrigin) {
+    this.origin = origin;
+  }
+
+  /**
+   * Gets the (x, y) coordinate of a connection point on the origin based on a relative position.
+   */
+  private _getOriginPoint(originRect: ClientRect, position: ConnectedPosition): Point {
+    let x: number;
+    if (position.originX == 'center') {
+      // Note: when centering we should always use the `left`
+      // offset, otherwise the position will be wrong in RTL.
+      x = originRect.left + (originRect.width / 2);
+    } else {
+      const startX = originRect.left;
+      const endX = originRect.right;
+      x = position.originX == 'start' ? startX : endX;
+    }
+
+    let y: number;
+    if (position.originY == 'center') {
+      y = originRect.top + (originRect.height / 2);
+    } else {
+      y = position.originY == 'top' ? originRect.top : originRect.bottom;
+    }
+
+    return { x, y };
+  }
+
+   /** Returns the ClientRect of the current origin. */
+   private _getOriginRect(): ClientRect {
+    const origin = this.origin;
+
+    // Check for Element so SVG elements are also supported.
+    if (origin instanceof Element) {
+      return origin.getBoundingClientRect();
+    }
+
+    const width = origin.width || 0;
+    const height = origin.height || 0;
+
+    // If the origin is a point, return a client rect as if it was a 0x0 element at the point.
+    return {
+      top: origin.y,
+      bottom: origin.y + height,
+      left: origin.x,
+      right: origin.x + width,
+      height,
+      width
+    };
+  }
+}
+
 // import { PositionStrategy } from "./position_strategy";
 // import { OverlayProps } from "../overlay_props";
 // import {coerceCssPixelValue, coerceArray} from '../../coercion';
+// import { ConnectionPositionPair } from "./position_pair";
 
 // export type FlexibleConnectedPositionStrategyOrigin = Element | Point & {
 //     width?: number;
@@ -39,7 +157,7 @@
 //     /** Amount of space that must be maintained between the overlay and the edge of the viewport. */
 //     private _viewportMargin = 0;
 
-
+//     _preferredPositions: ConnectionPositionPair[] = [];
 
 //     /** The origin element against which the overlay will be positioned. */
 //     private _origin: FlexibleConnectedPositionStrategyOrigin;
@@ -76,7 +194,7 @@
 //     private _previousPushAmount: { x: number, y: number } | null;
 
 //     private _document = window.document;
-    
+
 //     constructor(
 //         connectedTo: FlexibleConnectedPositionStrategyOrigin,
 //     ) {

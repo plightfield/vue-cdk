@@ -16,6 +16,6 @@ export class OverlayService {
   constructor(private hostElement: HTMLElement) {}
 
   create(config: OverlayConfig) {
-    return new OverlayState(config.strategy, config.backdropClose);
+    return new OverlayState(config.strategy, config.backdropClose ?? true);
   }
 }
