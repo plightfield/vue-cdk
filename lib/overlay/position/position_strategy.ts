@@ -1,4 +1,3 @@
-import { CSSProperties } from "vue";
 import { OverlayProps } from '../overlay_props';
 
 

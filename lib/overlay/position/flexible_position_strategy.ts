@@ -2,7 +2,7 @@ import { OverlayProps } from "../overlay_props";
 import { ConnectionPositionPair, OverlayConnectionPosition } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, isRef, Ref } from 'vue';
+import { ComponentInternalInstance, isRef, ref, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
@@ -16,6 +16,9 @@ export type FlexibleConnectedPositionStrategyOrigin = Element | Ref<Element | Co
 
 export class FlexiblePositionStrategy implements PositionStrategy {
 
+  private width: number = 100;
+  private height: number = 100;
+
   private positionPair: ConnectionPositionPair = new ConnectionPositionPair({
     originX: 'left',
     originY: 'bottom',
@@ -28,17 +31,17 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     private origin: FlexibleConnectedPositionStrategyOrigin
   ) { }
 
-  setup(): OverlayProps {
+  setup(): Ref<OverlayProps> {
     const originRect = this._getOriginRect();
-    const point = this._getOriginPoint(originRect, this.positionPair);
-    console.log(point);
-    return {
+    const originPoint = this._getOriginPoint(originRect, this.positionPair);
+    const point = this._getOverlayPoint(originPoint, this.positionPair);
+    return ref({
       positionedStyle: {
         position: "absolute",
         left: coerceCssPixelValue(point.x),
         top: coerceCssPixelValue(point.y),
-        width: coerceCssPixelValue(originRect.width),
-        height: coerceCssPixelValue(originRect.height),
+        width: coerceCssPixelValue(this.width),
+        height: coerceCssPixelValue(this.height),
       },
       containerStyle: {
         position: 'fixed',
@@ -47,19 +50,49 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         width: '100vw',
         height: '100vh'
       }
-    }
+    }) as Ref<OverlayProps>;
   }
 
 
   setOrigin(origin: FlexibleConnectedPositionStrategyOrigin) {
     this.origin = origin;
+    return this;
   }
 
 
   setPositionPair(positionPair: ConnectionPositionPair) {
     this.positionPair = positionPair;
+    return this;
   }
 
+  setHeight(height: number): this {
+    this.height = height;
+    return this;
+  }
+
+  setWidth(width: number): this {
+    this.width = width;
+    return this;
+  }
+
+
+  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair): Point {
+    let x: number;
+    if (position.overlayX == 'center') {
+      x = originPoint.x - this.width / 2;
+    } else {
+      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - this.width);
+    }
+
+    let y: number;
+    if (position.overlayY == 'center') {
+      y = originPoint.y - (this.height / 2);
+    } else {
+      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - this.height);
+    }
+
+    return { x, y };
+  }
 
   /**
    * Gets the (x, y) coordinate of a connection point on the origin based on a relative position.
@@ -121,5 +154,23 @@ export class FlexiblePositionStrategy implements PositionStrategy {
       height,
       width
     };
+  }
+
+  caculateScroll() {
+    const bodyScrollTop = ref(0);
+    let time = 0;
+    let top = 0;
+    let inited = false;
+    function listen() {
+      const nowTime = Date.now();
+      const nowTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      if (!inited) {
+        inited = true;
+      }
+      const dt = nowTime - time;
+      const dTop = nowTop - top;
+      // if ()
+    }
+    requestAnimationFrame(listen);
   }
 }

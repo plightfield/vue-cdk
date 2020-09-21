@@ -28,14 +28,18 @@ const Test = defineComponent({
     return () => (
       <>
         <button onClick={click} style="display: block;">click me</button>
-
-        <button ref={target} onClick={clickFlexiblePosition} style="display: block;">click position</button>
-
+        <div style="position:absolute; top:300px; left:300px; height:150vh;">
+          <button
+            ref={target}
+            onClick={clickFlexiblePosition}
+            style="display: block; position:absolute; top: 300px; left: 300px; width: 200px;"
+          >click position</button>
+        </div>
         <GlobalOverlay>
           <div>'this is test'</div>
         </GlobalOverlay>
         <FlexibleOverlay>
-          <div style="background: red;">'this is flexible test'</div>
+          <div style="background: red; position: absolute;height: 100px;width:100px">'this is flexible test'</div>
         </FlexibleOverlay>
       </>
     );
