@@ -9,6 +9,8 @@
   "dependencies": {
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
+    "immutable": "^4.0.0-rc.12",
+    "rxjs": "^6.6.3",
     "vue": "^3.0.0-10"
   },
   "devDependencies": {
