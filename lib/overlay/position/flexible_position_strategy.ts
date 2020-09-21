@@ -1,38 +1,28 @@
 import { OverlayProps } from "../overlay_props";
-import { ConnectionPositionPair } from "./position_pair";
+import { ConnectionPositionPair, OverlayConnectionPosition } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
-import {coerceCssPixelValue} from '../../coercion';
+import { coerceCssPixelValue } from '../../coercion';
+import { ComponentInternalInstance, isRef, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
 }
 
-export type FlexibleConnectedPositionStrategyOrigin = Element | Point & {
+export type FlexibleConnectedPositionStrategyOrigin = Element | Ref<Element | ComponentInternalInstance | undefined> | (Point & {
   width?: number;
   height?: number;
-};
+});
 
-export interface ConnectedPosition {
-  originX: 'start' | 'center' | 'end';
-  originY: 'top' | 'center' | 'bottom';
-
-  overlayX: 'start' | 'center' | 'end';
-  overlayY: 'top' | 'center' | 'bottom';
-
-  weight?: number;
-  offsetX?: number;
-  offsetY?: number;
-  panelClass?: string | string[];
-}
 
 export class FlexiblePositionStrategy implements PositionStrategy {
 
-  // private width: string;
-
-  // private height: string;
-
-  /** Ordered list of preferred positions, from most to least desirable. */
-  // _preferredPositions: ConnectionPositionPair[] = [];
+  private positionPair: ConnectionPositionPair = new ConnectionPositionPair({
+    originX: 'left',
+    originY: 'bottom',
+  }, {
+    overlayX: 'left',
+    overlayY: 'top',
+  });
 
   constructor(
     private origin: FlexibleConnectedPositionStrategyOrigin
@@ -40,14 +30,13 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   setup(): OverlayProps {
     const originRect = this._getOriginRect();
-
-    // this._getOriginPoint(originRect, position);
-    console.log(originRect);
+    const point = this._getOriginPoint(originRect, this.positionPair);
+    console.log(point);
     return {
       positionedStyle: {
         position: "absolute",
-        top: coerceCssPixelValue(originRect.top),
-        left: coerceCssPixelValue(originRect.left),
+        left: coerceCssPixelValue(point.x),
+        top: coerceCssPixelValue(point.y),
         width: coerceCssPixelValue(originRect.width),
         height: coerceCssPixelValue(originRect.height),
       },
@@ -66,10 +55,16 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     this.origin = origin;
   }
 
+
+  setPositionPair(positionPair: ConnectionPositionPair) {
+    this.positionPair = positionPair;
+  }
+
+
   /**
    * Gets the (x, y) coordinate of a connection point on the origin based on a relative position.
    */
-  private _getOriginPoint(originRect: ClientRect, position: ConnectedPosition): Point {
+  private _getOriginPoint(originRect: ClientRect, position: ConnectionPositionPair): Point {
     let x: number;
     if (position.originX == 'center') {
       // Note: when centering we should always use the `left`
@@ -78,7 +73,7 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     } else {
       const startX = originRect.left;
       const endX = originRect.right;
-      x = position.originX == 'start' ? startX : endX;
+      x = position.originX == 'left' ? startX : endX;
     }
 
     let y: number;
@@ -91,13 +86,29 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     return { x, y };
   }
 
-   /** Returns the ClientRect of the current origin. */
-   private _getOriginRect(): ClientRect {
+  /** Returns the ClientRect of the current origin. */
+  private _getOriginRect(): ClientRect {
     const origin = this.origin;
 
     // Check for Element so SVG elements are also supported.
     if (origin instanceof Element) {
       return origin.getBoundingClientRect();
+    }
+
+    if (isRef(origin)) {
+      if (origin.value instanceof Element) {
+        return origin.value.getBoundingClientRect();
+      } else {
+        return {
+          top: 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 0,
+          width: 0
+        }
+        // return (origin.value?.proxy?.$el as Element)?.getBoundingClientRect();
+      }
     }
 
     const width = origin.width || 0;

@@ -1,12 +1,12 @@
-import { defineComponent, ref, SetupContext, Teleport, renderSlot } from "vue";
+import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance } from "vue";
+import { OverlayProps } from './overlay_props';
 import { PositionStrategy } from "./position/position_strategy";
 
 export class OverlayState {
   public readonly overlay: ReturnType<typeof defineComponent>;
   private show = ref(false);
-
   constructor(
-    private strategy: PositionStrategy, 
+    private strategy: PositionStrategy,
     private backdropClose: boolean,
   ) {
     this.overlay = this.render();
@@ -20,31 +20,43 @@ export class OverlayState {
     this.show.value = false;
   }
 
-  render(): ReturnType<typeof defineComponent> {
-    const styles = this.strategy.setup();
-    const originDisplay = styles.containerStyle.display;
-    return defineComponent<undefined>((_, ctx: SetupContext) => {
-      const click = () => {
-        if (this.backdropClose) {
-          this.show.value = false;
-        }
-      };
+  render(): DefineComponent {
+    const that = this;
+    return defineComponent({
+      setup(props, ctx: SetupContext) {
+        const click = (event: Event) => {
+          event.preventDefault();
+          if (that.backdropClose) {
+            that.show.value = false;
+          }
+        };
+        const styles = reactive<OverlayProps>({ containerStyle: {}, positionedStyle: {} });
+        const originDisplay = ref('');
 
-      return () => {
-        const containerStyle = {...styles.containerStyle};
-        const positionedStyle = {...styles.positionedStyle};
-        containerStyle.display = this.show.value ? originDisplay : 'none';
+        onMounted(() => {
+          const current = that.strategy.setup();
+          styles.containerStyle = current.containerStyle;
+          styles.positionedStyle = current.positionedStyle;
+          originDisplay.value = styles.containerStyle.display!;
+          styles.containerStyle.display = 'none';
+        });
 
-        return (
-          <Teleport to="#vue-cdk-overlay">
-            <div style={containerStyle} onClick={click}>
-              <div style={positionedStyle}>
-                {renderSlot(ctx.slots, 'default')}
+        watch(that.show, (value) => {
+          styles.containerStyle.display = value ? originDisplay.value : 'none';
+        });
+
+        return () => {
+          return (
+            <Teleport to="#vue-cdk-overlay">
+              <div style={styles.containerStyle} onClick={click}>
+                <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
+                  {renderSlot(ctx.slots, 'default')}
+                </div>
               </div>
-            </div>
-          </Teleport>
-        );
+            </Teleport>
+          );
+        }
       }
-    }) as any;
+    });
   }
 }

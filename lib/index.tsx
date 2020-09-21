@@ -6,7 +6,6 @@ import { overlay } from './overlay';
 
 function injectComponents(app: any, components: any[]) {
   for (let component of components) {
-    console.log(component);
     app.component("cdk-" + component.displayName, component);
   }
 }
