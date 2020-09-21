@@ -4,6 +4,8 @@
 // ! cdk should not have any of upper cases
 // components
 import Test from "./Test";
+import OverlayTest from "./overlay/Test";
+import { overlay } from "./overlay";
 
 // functions
 import eventStream from "./eventStream";
