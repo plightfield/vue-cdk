@@ -1,6 +1,6 @@
-import { CSSProperties } from "vue";
+import { CSSProperties, Ref } from "vue";
 
 export interface OverlayProps {
   containerStyle: CSSProperties;
-  positionedStyle: CSSProperties;
+  positionedStyle: Ref<CSSProperties>;
 }
