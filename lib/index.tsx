@@ -4,8 +4,11 @@
 // ! cdk should not have any of upper cases
 // components
 import Test from "./Test";
-import OverlayTest from "./overlay/Test";
-import { overlay } from "./overlay";
+import { overlayPlugin } from "./overlay";
+import { platformPlugin } from "./platform";
+
+import OverlayTest from "./overlay/test";
+import PlatformTest from "./platform/test";
 
 // functions
 import eventStream from "./eventStream";
@@ -20,7 +23,7 @@ import computedStream from "./computedStream";
  */
 function injectComponents(app: any, components: any[]) {
   for (let component of components) {
-    app.component("cdk-" + component.displayName, component);
+    app.component("cdk-" + component.name, component);
   }
 }
 
@@ -29,7 +32,9 @@ function injectComponents(app: any, components: any[]) {
 // *cdx.xxx Cdk.XXX
 export default {
   install(app: any, options: any) {
-    injectComponents(app, [Test]);
+    injectComponents(app, [Test, OverlayTest, PlatformTest]);
+    overlayPlugin.install(app, options);
+    platformPlugin.install(app, options);
   },
   eventStream,
   immerRef,

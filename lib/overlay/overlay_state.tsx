@@ -1,4 +1,5 @@
-import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance } from "vue";
+import { coerceCssPixelToNumber, coerceCssPixelValue } from '../coercion/coerce_css_pixel_value';
+import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance, watchEffect, CSSProperties, shallowReactive, onUnmounted } from "vue";
 import { OverlayProps } from './overlay_props';
 import { PositionStrategy } from "./position/position_strategy";
 
@@ -30,15 +31,22 @@ export class OverlayState {
             that.show.value = false;
           }
         };
-        const styles = reactive<OverlayProps>({ containerStyle: {}, positionedStyle: {} });
+        const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({ containerStyle: {}, positionedStyle: {} });
         const originDisplay = ref('');
 
         onMounted(() => {
           const current = that.strategy.setup();
+          watch(current.positionedStyle, (value) => {
+            styles.positionedStyle = current.positionedStyle.value;
+          });
           styles.containerStyle = current.containerStyle;
-          styles.positionedStyle = current.positionedStyle;
+          styles.positionedStyle = current.positionedStyle.value;
           originDisplay.value = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
+        });
+
+        onUnmounted(() => {
+          that.strategy.dispose();
         });
 
         watch(that.show, (value) => {
