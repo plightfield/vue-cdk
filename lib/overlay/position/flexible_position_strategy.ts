@@ -8,18 +8,25 @@ interface Point {
   y: number;
 }
 
-export type FlexibleConnectedPositionStrategyOrigin = Element | Ref<Element | ComponentInternalInstance | undefined> | (Point & {
+export type FlexiblePositionStrategyOrigin = Element | Ref<Element | ComponentInternalInstance | undefined> | (Point & {
   width?: number;
   height?: number;
 });
 
-
+/**
+ * @description
+ * Flexible position strategy can let your overlay
+ * content flexible in a overlay wrapper dom.
+ * @date 2020-09-22
+ * @export
+ * @class FlexiblePositionStrategy
+ */
 export class FlexiblePositionStrategy implements PositionStrategy {
 
-  private width: number = 100;
-  private height: number = 100;
+  private _width: number = 100;
+  private _height: number = 100;
 
-  private positionPair: ConnectionPositionPair = new ConnectionPositionPair({
+  private _positionPair: ConnectionPositionPair = new ConnectionPositionPair({
     originX: 'left',
     originY: 'bottom',
   }, {
@@ -32,13 +39,20 @@ export class FlexiblePositionStrategy implements PositionStrategy {
   private subscribe?: (event: Event) => void;
 
   constructor(
-    private origin: FlexibleConnectedPositionStrategyOrigin
+    private _origin: FlexiblePositionStrategyOrigin
   ) { }
 
   setup(): OverlayProps {
     const originRect = this._getOriginRect();
-    const originPoint = this._getOriginPoint(originRect, this.positionPair);
-    const point = this._getOverlayPoint(originPoint, this.positionPair);
+
+    // calculate the origin point
+    const originPoint = this._getOriginPoint(originRect, this._positionPair);
+
+    // calculate the overlay anchor point
+    const point = this._getOverlayPoint(originPoint, this._positionPair);
+
+    // set the current position style's value.
+    // the current position style is a 'ref'.
     this.currentPositionedStyle.value = {
       position: "absolute",
       left: coerceCssPixelValue(point.x),
@@ -47,9 +61,12 @@ export class FlexiblePositionStrategy implements PositionStrategy {
       height: coerceCssPixelValue(this.height),
     };
 
+    // at last, we need to caculate the position when
+    // scrolling.
     this.caculateScroll(this.currentPositionedStyle, point);
 
     // why not just return a stream???
+    // prefer using rxjs...
     return {
       positionedStyle: this.currentPositionedStyle,
       containerStyle: {
@@ -68,42 +85,60 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     }
   }
 
-
-  setOrigin(origin: FlexibleConnectedPositionStrategyOrigin) {
-    this.origin = origin;
+  /**
+   * Sets the origin of the overlay.
+   * 
+   * @param value New origin.
+   */
+  origin(value: FlexiblePositionStrategyOrigin) {
+    this._origin = value;
     return this;
   }
 
-
-  setPositionPair(positionPair: ConnectionPositionPair) {
-    this.positionPair = positionPair;
+  /**
+   * Sets the position pair of the overlay.
+   * In flexible overlay, you need to mark 
+   * two anchor points, one is the element
+   * you want to anchor on it, the another
+   * one is Overlay.
+   * @param value New position pair.
+   */
+  positionPair(value: ConnectionPositionPair) {
+    this._positionPair = value;
     return this;
   }
 
-  setHeight(height: number): this {
-    this.height = height;
+  /**
+   * Sets the height of the overlay.
+   * @param height New height.
+   */
+  height(height: number): this {
+    this._height = height;
     return this;
   }
 
-  setWidth(width: number): this {
-    this.width = width;
+  /**
+   * Sets the width of the overlay.
+   * @param width New width.
+   */
+  width(width: number): this {
+    this._width = width;
     return this;
   }
-
 
   private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair): Point {
     let x: number;
     if (position.overlayX == 'center') {
-      x = originPoint.x - this.width / 2;
+      x = originPoint.x - this._width / 2;
     } else {
-      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - this.width);
+      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - this._width);
     }
 
     let y: number;
     if (position.overlayY == 'center') {
-      y = originPoint.y - (this.height / 2);
+      y = originPoint.y - (this._height / 2);
     } else {
-      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - this.height);
+      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - this._height);
     }
 
     return { x, y };
@@ -134,7 +169,7 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   /** Returns the ClientRect of the current origin. */
   private _getOriginRect(): ClientRect {
-    const origin = this.origin;
+    const origin = this._origin;
 
     // Check for Element so SVG elements are also supported.
     if (origin instanceof Element) {

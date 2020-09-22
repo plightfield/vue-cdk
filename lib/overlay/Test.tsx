@@ -4,6 +4,7 @@ import { OverlayService } from "./overlay_service";
 import { FlexiblePositionStrategy } from "./position/flexible_position_strategy";
 import { GlobalPositionStrategy } from "./position/global_position_strategy";
 const Test = defineComponent({
+  name: 'overlay-test',
   setup() {
     const service = inject(OverlayService.key)!;
     const target = ref<Element>();
@@ -45,7 +46,5 @@ const Test = defineComponent({
     );
   }
 });
-
-Test.displayName = 'overlay-test-component';
 
 export default Test;
