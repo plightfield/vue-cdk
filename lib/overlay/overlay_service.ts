@@ -1,4 +1,4 @@
-import { InjectionKey} from "vue";
+import { InjectionKey } from "vue";
 import { OverlayState } from "./overlay_state";
 import { OverlayConfig } from "./overlay_config";
 
@@ -12,10 +12,14 @@ import { OverlayConfig } from "./overlay_config";
  */
 export class OverlayService {
   static key: InjectionKey<OverlayService> = Symbol('cdk-overlay');
-  
-  constructor(private hostElement: HTMLElement) {}
+
+  constructor(private hostElement: HTMLElement) { }
 
   create(config: OverlayConfig) {
-    return new OverlayState(config.strategy, config.backdropClose ?? true);
+    return new OverlayState(
+      config.strategy, 
+      config.backdropClose ?? true, 
+      config.backgroundBlock ?? true
+    );
   }
 }

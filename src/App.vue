@@ -1,7 +1,8 @@
 
 <template>
   <!-- <cdk-test-component /> -->
-  <cdk-overlay-test-component />
+  <cdk-overlay-test />
+  <!-- <cdk-platform-test /> -->
 </template>
 
 <script>

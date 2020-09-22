@@ -1,4 +1,4 @@
-import { CSSProperties } from "vue";
+import { CSSProperties, reactive, ref, Ref } from "vue";
 import { OverlayProps } from "../overlay_props";
 import { PositionStrategy } from "./position_strategy";
 
@@ -70,8 +70,6 @@ export class GlobalPositionStrategy implements PositionStrategy {
   /**
    * Sets the overlay width and clears any previously set width.
    * @param value New width for the overlay
-   * @deprecated Pass the `width` through the `OverlayConfig`.
-   * @breaking-change 8.0.0
    */
   width(value: string = ''): this {
     this._width = value;
@@ -81,8 +79,6 @@ export class GlobalPositionStrategy implements PositionStrategy {
   /**
    * Sets the overlay height and clears any previously set height.
    * @param value New height for the overlay
-   * @deprecated Pass the `height` through the `OverlayConfig`.
-   * @breaking-change 8.0.0
    */
   height(value: string = ''): this {
     this._height = value;
@@ -92,7 +88,6 @@ export class GlobalPositionStrategy implements PositionStrategy {
   /**
    * Centers the overlay horizontally with an optional offset.
    * Clears any previously set horizontal position.
-   *
    * @param offset Overlay offset from the horizontal center.
    */
   centerHorizontally(offset: string = ''): this {
@@ -118,7 +113,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
    * @returns OverlayProps
    */
   setup(): OverlayProps {
-    const positionedStyle: CSSProperties = {
+    const positionedStyle = ref<CSSProperties>({
       width: this._width,
       height: this._height,
       position: this._cssPosition,
@@ -126,7 +121,8 @@ export class GlobalPositionStrategy implements PositionStrategy {
       marginRight: this._rightOffset,
       marginTop: this._topOffset,
       marginBottom: this._bottomOffset,
-    };
+    });
+    // container style must set display to flex.
     const containerStyle: CSSProperties = {
       top: 0,
       left: 0,
@@ -138,10 +134,14 @@ export class GlobalPositionStrategy implements PositionStrategy {
       justifyContent: this._justifyContent,
       alignItems: this._alignItems,
     };
-    
+
     return {
       containerStyle,
       positionedStyle,
     };
   }
+
+  dispose(): void {
+  }
+
 }
