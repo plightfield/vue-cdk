@@ -1,8 +1,8 @@
 import { OverlayProps } from "../overlay_props";
-import { ConnectionPositionPair, OverlayConnectionPosition } from "./position_pair";
+import { ConnectionPositionPair } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, isRef, Ref } from 'vue';
+import { ComponentInternalInstance, CSSProperties, isRef, ref, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
@@ -16,6 +16,9 @@ export type FlexibleConnectedPositionStrategyOrigin = Element | Ref<Element | Co
 
 export class FlexiblePositionStrategy implements PositionStrategy {
 
+  private width: number = 100;
+  private height: number = 100;
+
   private positionPair: ConnectionPositionPair = new ConnectionPositionPair({
     originX: 'left',
     originY: 'bottom',
@@ -24,22 +27,31 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     overlayY: 'top',
   });
 
+  private currentPositionedStyle = ref<CSSProperties>({});
+
+  private subscribe?: (event: Event) => void;
+
   constructor(
     private origin: FlexibleConnectedPositionStrategyOrigin
   ) { }
 
   setup(): OverlayProps {
     const originRect = this._getOriginRect();
-    const point = this._getOriginPoint(originRect, this.positionPair);
-    console.log(point);
+    const originPoint = this._getOriginPoint(originRect, this.positionPair);
+    const point = this._getOverlayPoint(originPoint, this.positionPair);
+    this.currentPositionedStyle.value = {
+      position: "absolute",
+      left: coerceCssPixelValue(point.x),
+      top: coerceCssPixelValue(point.y),
+      width: coerceCssPixelValue(this.width),
+      height: coerceCssPixelValue(this.height),
+    };
+
+    this.caculateScroll(this.currentPositionedStyle, point);
+
+    // why not just return a stream???
     return {
-      positionedStyle: {
-        position: "absolute",
-        left: coerceCssPixelValue(point.x),
-        top: coerceCssPixelValue(point.y),
-        width: coerceCssPixelValue(originRect.width),
-        height: coerceCssPixelValue(originRect.height),
-      },
+      positionedStyle: this.currentPositionedStyle,
       containerStyle: {
         position: 'fixed',
         top: '0',
@@ -47,19 +59,55 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         width: '100vw',
         height: '100vh'
       }
+    };
+  }
+
+  dispose(): void {
+    if (this.subscribe) {
+      document.removeEventListener('scroll', this.subscribe);
     }
   }
 
 
   setOrigin(origin: FlexibleConnectedPositionStrategyOrigin) {
     this.origin = origin;
+    return this;
   }
 
 
   setPositionPair(positionPair: ConnectionPositionPair) {
     this.positionPair = positionPair;
+    return this;
   }
 
+  setHeight(height: number): this {
+    this.height = height;
+    return this;
+  }
+
+  setWidth(width: number): this {
+    this.width = width;
+    return this;
+  }
+
+
+  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair): Point {
+    let x: number;
+    if (position.overlayX == 'center') {
+      x = originPoint.x - this.width / 2;
+    } else {
+      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - this.width);
+    }
+
+    let y: number;
+    if (position.overlayY == 'center') {
+      y = originPoint.y - (this.height / 2);
+    } else {
+      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - this.height);
+    }
+
+    return { x, y };
+  }
 
   /**
    * Gets the (x, y) coordinate of a connection point on the origin based on a relative position.
@@ -121,5 +169,14 @@ export class FlexiblePositionStrategy implements PositionStrategy {
       height,
       width
     };
+  }
+
+  caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
+    this.subscribe = function (event: Event) {
+      const nowTop = window.pageYOffset;
+      style.value.top = coerceCssPixelValue(originPoint.y - nowTop);
+      style.value = style.value;
+    }
+    document.addEventListener('scroll', this.subscribe);
   }
 }

@@ -1,4 +1,4 @@
-import {Teleport, defineComponent, SetupContext, renderSlot, ref } from 'vue';
+import { Teleport, defineComponent, SetupContext, renderSlot, ref } from 'vue';
 import { PositionStrategy } from './position/position_strategy';
 
 export const useOverlay = (strategy: PositionStrategy, backdropClose: boolean) => {
@@ -15,8 +15,8 @@ export const useOverlay = (strategy: PositionStrategy, backdropClose: boolean) =
       };
 
       return () => {
-        const containerStyle = {...styles.containerStyle};
-        const positionedStyle = {...styles.positionedStyle};
+        const containerStyle = { ...styles.containerStyle };
+        const positionedStyle = { ...styles.positionedStyle.value };
         containerStyle.display = show.value ? originDisplay : 'none';
         return (
           <Teleport to="#vue-cdk-overlay">

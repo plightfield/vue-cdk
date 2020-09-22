@@ -1,4 +1,4 @@
-import { CSSProperties } from "vue";
+import { CSSProperties, reactive, ref, Ref } from "vue";
 import { OverlayProps } from "../overlay_props";
 import { PositionStrategy } from "./position_strategy";
 
@@ -118,7 +118,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
    * @returns OverlayProps
    */
   setup(): OverlayProps {
-    const positionedStyle: CSSProperties = {
+    const positionedStyle = ref<CSSProperties>({
       width: this._width,
       height: this._height,
       position: this._cssPosition,
@@ -126,7 +126,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
       marginRight: this._rightOffset,
       marginTop: this._topOffset,
       marginBottom: this._bottomOffset,
-    };
+    });
     const containerStyle: CSSProperties = {
       top: 0,
       left: 0,
@@ -138,10 +138,14 @@ export class GlobalPositionStrategy implements PositionStrategy {
       justifyContent: this._justifyContent,
       alignItems: this._alignItems,
     };
-    
+
     return {
       containerStyle,
       positionedStyle,
     };
   }
+
+  dispose(): void {
+  }
+
 }
