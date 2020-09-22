@@ -1,7 +1,7 @@
 import { OverlayProps } from "../overlay_props";
-import { ConnectionPositionPair, OverlayConnectionPosition } from "./position_pair";
+import { ConnectionPositionPair } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
-import { coerceCssPixelToNumber, coerceCssPixelValue } from '../../coercion';
+import { coerceCssPixelValue } from '../../coercion';
 import { ComponentInternalInstance, CSSProperties, isRef, ref, Ref } from 'vue';
 interface Point {
   x: number;
