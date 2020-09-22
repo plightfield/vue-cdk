@@ -1,8 +1,8 @@
 import { OverlayProps } from "../overlay_props";
 import { ConnectionPositionPair, OverlayConnectionPosition } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
-import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, isRef, ref, Ref } from 'vue';
+import { coerceCssPixelToNumber, coerceCssPixelValue } from '../../coercion';
+import { ComponentInternalInstance, CSSProperties, isRef, ref, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
@@ -27,22 +27,31 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     overlayY: 'top',
   });
 
+  private currentPositionedStyle = ref<CSSProperties>({});
+
+  private subscribe?: (event: Event) => void;
+
   constructor(
     private origin: FlexibleConnectedPositionStrategyOrigin
   ) { }
 
-  setup(): Ref<OverlayProps> {
+  setup(): OverlayProps {
     const originRect = this._getOriginRect();
     const originPoint = this._getOriginPoint(originRect, this.positionPair);
     const point = this._getOverlayPoint(originPoint, this.positionPair);
-    return ref({
-      positionedStyle: {
-        position: "absolute",
-        left: coerceCssPixelValue(point.x),
-        top: coerceCssPixelValue(point.y),
-        width: coerceCssPixelValue(this.width),
-        height: coerceCssPixelValue(this.height),
-      },
+    this.currentPositionedStyle.value = {
+      position: "absolute",
+      left: coerceCssPixelValue(point.x),
+      top: coerceCssPixelValue(point.y),
+      width: coerceCssPixelValue(this.width),
+      height: coerceCssPixelValue(this.height),
+    };
+
+    this.caculateScroll(this.currentPositionedStyle, point);
+
+    // why not just return a stream???
+    return {
+      positionedStyle: this.currentPositionedStyle,
       containerStyle: {
         position: 'fixed',
         top: '0',
@@ -50,7 +59,13 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         width: '100vw',
         height: '100vh'
       }
-    }) as Ref<OverlayProps>;
+    };
+  }
+
+  dispose(): void {
+    if (this.subscribe) {
+      document.removeEventListener('scroll', this.subscribe);
+    }
   }
 
 
@@ -156,21 +171,12 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     };
   }
 
-  caculateScroll() {
-    const bodyScrollTop = ref(0);
-    let time = 0;
-    let top = 0;
-    let inited = false;
-    function listen() {
-      const nowTime = Date.now();
-      const nowTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-      if (!inited) {
-        inited = true;
-      }
-      const dt = nowTime - time;
-      const dTop = nowTop - top;
-      // if ()
+  caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
+    this.subscribe = function (event: Event) {
+      const nowTop = window.pageYOffset;
+      style.value.top = coerceCssPixelValue(originPoint.y - nowTop);
+      style.value = style.value;
     }
-    requestAnimationFrame(listen);
+    document.addEventListener('scroll', this.subscribe);
   }
 }

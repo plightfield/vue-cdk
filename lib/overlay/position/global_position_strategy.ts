@@ -117,8 +117,8 @@ export class GlobalPositionStrategy implements PositionStrategy {
    * setup the position style.
    * @returns OverlayProps
    */
-  setup(): Ref<OverlayProps> {
-    const positionedStyle: CSSProperties = {
+  setup(): OverlayProps {
+    const positionedStyle = ref<CSSProperties>({
       width: this._width,
       height: this._height,
       position: this._cssPosition,
@@ -126,7 +126,7 @@ export class GlobalPositionStrategy implements PositionStrategy {
       marginRight: this._rightOffset,
       marginTop: this._topOffset,
       marginBottom: this._bottomOffset,
-    };
+    });
     const containerStyle: CSSProperties = {
       top: 0,
       left: 0,
@@ -139,12 +139,13 @@ export class GlobalPositionStrategy implements PositionStrategy {
       alignItems: this._alignItems,
     };
 
-    return ref({
+    return {
       containerStyle,
       positionedStyle,
-    });
+    };
   }
 
-  apply(): void {
+  dispose(): void {
   }
+
 }

@@ -1,5 +1,5 @@
 import { coerceCssPixelToNumber, coerceCssPixelValue } from '../coercion/coerce_css_pixel_value';
-import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance, watchEffect } from "vue";
+import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance, watchEffect, CSSProperties, shallowReactive, onUnmounted } from "vue";
 import { OverlayProps } from './overlay_props';
 import { PositionStrategy } from "./position/position_strategy";
 
@@ -31,52 +31,27 @@ export class OverlayState {
             that.show.value = false;
           }
         };
-        const styles = reactive<OverlayProps>({ containerStyle: {}, positionedStyle: {} });
+        const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({ containerStyle: {}, positionedStyle: {} });
         const originDisplay = ref('');
 
         onMounted(() => {
           const current = that.strategy.setup();
+          watch(current.positionedStyle, (value) => {
+            styles.positionedStyle = current.positionedStyle.value;
+          });
           styles.containerStyle = current.containerStyle;
-          styles.positionedStyle = current.positionedStyle;
+          styles.positionedStyle = current.positionedStyle.value;
           originDisplay.value = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
+        });
+
+        onUnmounted(() => {
+          that.strategy.dispose();
         });
 
         watch(that.show, (value) => {
           styles.containerStyle.display = value ? originDisplay.value : 'none';
         });
-
-
-        // const checkScrollSpeed = (function (settings?: { delay: number }) {
-        //   let lastPos: number;
-        //   let newPos: number;
-        //   let timer: number;
-        //   let delta: number;
-        //   let delay = settings?.delay || 16;
-
-        //   function clear() {
-        //     lastPos = 0;
-        //     delta = 0;
-        //   }
-
-        //   clear();
-
-        //   return (event: Event) => {
-        //     newPos = document.body.scrollTop;
-        //     if (lastPos != null) { // && newPos < maxScroll 
-        //       delta = newPos - lastPos;
-        //     }
-        //     lastPos = newPos;
-        //     clearTimeout(timer);
-        //     timer = setTimeout(clear, delay);
-
-        //     let value = coerceCssPixelToNumber(styles.positionedStyle.top);
-        //     value += delta;
-        //     styles.positionedStyle.top = coerceCssPixelValue(value);
-        //   };
-        // })();
-
-
 
         return () => {
           return (
