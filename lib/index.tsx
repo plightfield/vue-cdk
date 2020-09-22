@@ -5,15 +5,8 @@
 // components
 import Test from "./Test";
 import { overlayPlugin } from "./overlay";
-import { platformPlugin } from "./platform";
 
-import OverlayTest from "./overlay/test";
-import PlatformTest from "./platform/test";
-
-// functions
-import eventStream from "./eventStream";
-import immerRef from "./immerRef";
-import computedStream from "./computedStream";
+import OverlayTest from "./overlay/Test";
 
 /**
  * ruled component template name
@@ -32,18 +25,11 @@ function injectComponents(app: any, components: any[]) {
 // *cdx.xxx Cdk.XXX
 export default {
   install(app: any, options: any) {
-    injectComponents(app, [Test, OverlayTest, PlatformTest]);
+    injectComponents(app, [Test, OverlayTest]);
     overlayPlugin.install(app, options);
-    platformPlugin.install(app, options);
   },
-  eventStream,
-  immerRef,
-  computedStream,
   Test,
 };
 
 // import {xxx,xxx} from 'cdk'
-export const cdkEventStream = eventStream;
-export const cdkImmerRef = immerRef;
-export const cdkComputedStream = computedStream;
 export const CdkTest = Test;
