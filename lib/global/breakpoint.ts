@@ -26,11 +26,9 @@ export default class {
     const handler = (e: any) => {
       cb(e.matches);
     };
-    if (inject(platformToken)?.BROWSER) {
-      mql = window.matchMedia(query);
-      cb(mql.matches);
-      mql.addEventListener("change", handler);
-    }
+    mql = window.matchMedia(query);
+    cb(mql.matches);
+    mql.addEventListener("change", handler);
     onBeforeUnmount(() => {
       if (mql) {
         mql.removeEventListener("change", handler);

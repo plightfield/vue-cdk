@@ -3,7 +3,7 @@ import { OverlayState } from "./overlay_state";
 import { OverlayConfig } from "./overlay_config";
 import { GlobalPositionStrategy } from './position/global_position_strategy';
 import { FlexiblePositionStrategy, FlexiblePositionStrategyOrigin } from './position/flexible_position_strategy';
-import { platformToken } from 'lib/global';
+import { platformToken } from '../global';
 
 /**
  * @description
@@ -27,7 +27,7 @@ export class OverlayService {
       return new GlobalPositionStrategy();
     } else {
       const platform = inject(platformToken)!;
-      return new FlexiblePositionStrategy(args[0], platform.TOP!, platform.BODY!);
+      return new FlexiblePositionStrategy(args[0], window, platform.BODY!);
     }
   }
 }
