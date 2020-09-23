@@ -9,7 +9,7 @@ import {
   watch,
   reactive,
   CSSProperties,
-  onUnmounted, Transition
+  onUnmounted,
 } from "vue";
 import { OverlayConfig } from '.';
 import './overlay_state.css';
