@@ -4,6 +4,7 @@ import BP from "./global/breakpoint.spec";
 import PLAT from "./global/platform.spec";
 import OVERLAY from "./overlay/overlay.spec";
 import CB from "./global/clipboard.spec";
+import VR from "./scrolling/viewportRuler.spec";
 
 export default defineComponent({
   name: "test",
@@ -20,6 +21,8 @@ export default defineComponent({
         <OVERLAY />
         <h2>clipboard</h2>
         <CB />
+        <h2>viewport ruler</h2>
+        <VR />
       </>
     );
   },
