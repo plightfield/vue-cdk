@@ -36,11 +36,7 @@ export class OverlayService {
       return new GlobalPositionStrategy();
     } else {
       const platform = inject(platformToken)!;
-      return new FlexiblePositionStrategy(
-        args[0],
-        platform.TOP!,
-        platform.BODY!
-      );
+      return new FlexiblePositionStrategy(args[0], window, platform.BODY!);
     }
   }
 }
