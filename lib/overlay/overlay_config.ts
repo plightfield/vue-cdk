@@ -9,6 +9,9 @@ import { PositionStrategy } from "./position/position_strategy";
  * @interface OverlayConfig
  */
 export interface OverlayConfig {
-    strategy: PositionStrategy;
-    backdropClose?: boolean;
+  readonly strategy: PositionStrategy;
+  readonly backdropClose?: boolean;
+  readonly backdropClick?: () => void;
+  readonly backgroundBlock?: boolean;
+  readonly backgroundClass?: string | string[];
 }

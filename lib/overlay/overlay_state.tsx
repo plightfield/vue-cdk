@@ -1,23 +1,39 @@
-import { coerceCssPixelToNumber, coerceCssPixelValue } from '../coercion/coerce_css_pixel_value';
-import { defineComponent, ref, SetupContext, Teleport, renderSlot, DefineComponent, onMounted, watch, reactive, ComponentInternalInstance, watchEffect, CSSProperties, shallowReactive, onUnmounted } from "vue";
-import { OverlayProps } from './overlay_props';
-import { PositionStrategy } from "./position/position_strategy";
+import {
+  defineComponent,
+  ref,
+  SetupContext,
+  Teleport,
+  renderSlot,
+  DefineComponent,
+  onMounted,
+  watch,
+  reactive,
+  CSSProperties,
+  onUnmounted,
+} from "vue";
+import { OverlayConfig } from '.';
+import './overlay_state.css';
 
 export class OverlayState {
-  public readonly overlay: ReturnType<typeof defineComponent>;
-  private show = ref(false);
+  public readonly overlay: DefineComponent;
+  private readonly show = ref(false);
+
+  private readonly originOverflow = this.body.style.overflow;
+
   constructor(
-    private strategy: PositionStrategy,
-    private backdropClose: boolean,
+    private readonly config: OverlayConfig,
+    private body: HTMLElement,
   ) {
     this.overlay = this.render();
   }
 
-  attach() {
+  attach(): void {
+    this._setOverflow(true);
     this.show.value = true;
   }
 
-  detach() {
+  detach(): void {
+    this._setOverflow(false);
     this.show.value = false;
   }
 
@@ -27,36 +43,46 @@ export class OverlayState {
       setup(props, ctx: SetupContext) {
         const click = (event: Event) => {
           event.preventDefault();
-          if (that.backdropClose) {
-            that.show.value = false;
+
+          that.config.backdropClick?.();
+          if (that.config.backdropClose ?? true) {
+            that.detach();
           }
         };
+        const containerClass = that._getContainerClass();
         const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({ containerStyle: {}, positionedStyle: {} });
-        const originDisplay = ref('');
+        let originDisplay = '';
 
         onMounted(() => {
-          const current = that.strategy.setup();
+          const current = that.config.strategy.setup();
           watch(current.positionedStyle, (value) => {
             styles.positionedStyle = current.positionedStyle.value;
           });
           styles.containerStyle = current.containerStyle;
           styles.positionedStyle = current.positionedStyle.value;
-          originDisplay.value = styles.containerStyle.display!;
+
+          originDisplay = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
         });
 
         onUnmounted(() => {
-          that.strategy.dispose();
+          that.config.strategy.dispose();
         });
 
         watch(that.show, (value) => {
-          styles.containerStyle.display = value ? originDisplay.value : 'none';
+          if (value) {
+            styles.containerStyle.display = originDisplay;
+            that.config.strategy.attach?.();
+          } else {
+            styles.containerStyle.display = 'none';
+            that.config.strategy.detach?.();
+          }
         });
 
         return () => {
           return (
             <Teleport to="#vue-cdk-overlay">
-              <div style={styles.containerStyle} onClick={click}>
+              <div style={styles.containerStyle} class={containerClass} onClick={click}>
                 <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
                   {renderSlot(ctx.slots, 'default')}
                 </div>
@@ -66,5 +92,24 @@ export class OverlayState {
         }
       }
     });
+  }
+
+  _setOverflow(enable: boolean) {
+    if (this.config.backgroundBlock) {
+      this.body.style.overflow = enable ? 'hidden' : this.originOverflow;
+    }
+  }
+
+  _getContainerClass() {
+    let bgClasses = 'overlay_container_background ';
+    const backgroundClass = this.config.backgroundClass;
+    if (!backgroundClass) {
+      return bgClasses;
+    }
+    if (Array.isArray(backgroundClass)) {
+      return bgClasses + backgroundClass.join(' ');
+    } else {
+      return bgClasses + backgroundClass;
+    }
   }
 }

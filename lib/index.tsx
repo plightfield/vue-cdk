@@ -6,7 +6,7 @@
 import Test from "./Test";
 import { overlayPlugin } from "./overlay";
 
-import OverlayTest from "./overlay/Test";
+import OverlayTest from "./overlay/overlay.spec";
 
 /**
  * ruled component template name
@@ -25,7 +25,7 @@ function injectComponents(app: any, components: any[]) {
 // *cdx.xxx Cdk.XXX
 export default {
   install(app: any, options: any) {
-    injectComponents(app, [Test, OverlayTest]);
+    injectComponents(app, [Test]);
     overlayPlugin.install(app, options);
   },
   Test,
@@ -33,3 +33,5 @@ export default {
 
 // import {xxx,xxx} from 'cdk'
 export const CdkTest = Test;
+
+export * from './overlay';

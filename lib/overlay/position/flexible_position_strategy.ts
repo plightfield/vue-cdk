@@ -2,13 +2,13 @@ import { OverlayProps } from "../overlay_props";
 import { ConnectionPositionPair } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, CSSProperties, isRef, ref, Ref } from 'vue';
+import { ComponentInternalInstance, ComponentPublicInstance, CSSProperties, isRef, ref, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
 }
 
-export type FlexiblePositionStrategyOrigin = Element | Ref<Element | ComponentInternalInstance | undefined> | (Point & {
+export type FlexiblePositionStrategyOrigin = Element | Ref<Element | ComponentPublicInstance | undefined> | (Point & {
   width?: number;
   height?: number;
 });
@@ -36,13 +36,20 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   private currentPositionedStyle = ref<CSSProperties>({});
 
-  private subscribe?: (event: Event) => void;
+
+  
+  private subscribe?: () => void;
+
+  private isVisible = false;
 
   constructor(
-    private _origin: FlexiblePositionStrategyOrigin
+    private _origin: FlexiblePositionStrategyOrigin,
+    private window: Window, 
+    private body: HTMLElement,
   ) { }
 
   setup(): OverlayProps {
+
     const originRect = this._getOriginRect();
 
     // calculate the origin point
@@ -79,9 +86,18 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     };
   }
 
+  attach(): void {
+    this.isVisible = true;
+    this.subscribe?.();
+  }
+
+  detach(): void {
+    this.isVisible = false;
+  }
+
   dispose(): void {
     if (this.subscribe) {
-      document.removeEventListener('scroll', this.subscribe);
+      this.body.removeEventListener('scroll', this.subscribe);
     }
   }
 
@@ -179,15 +195,18 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     if (isRef(origin)) {
       if (origin.value instanceof Element) {
         return origin.value.getBoundingClientRect();
-      } else {
+      } else if (origin.value && origin.value.$el instanceof Element) {
+        // return origin.value?.$el
         // TODO: Get the component's rect
+        return origin.value.$el.getBoundingClientRect();
+      } else {
         return {
           top: 0,
-          bottom: 0,
           left: 0,
           right: 0,
+          bottom: 0,
           height: 0,
-          width: 0
+          width: 0,
         }
       }
     }
@@ -207,11 +226,19 @@ export class FlexiblePositionStrategy implements PositionStrategy {
   }
 
   caculateScroll(style: Ref<CSSProperties>, originPoint: Point) {
-    this.subscribe = function (event: Event) {
-      const nowTop = window.pageYOffset;
-      style.value.top = coerceCssPixelValue(originPoint.y - nowTop);
-      style.value = style.value;
+    let offsetX = window.pageXOffset;
+    let offsetY = window.pageYOffset;
+    this.subscribe = () => {
+      if (this.isVisible) {
+        const nowTop = this.window.pageYOffset;
+        const nowLeft = this.window.pageXOffset;
+        style.value.left = coerceCssPixelValue(originPoint.x - nowLeft + offsetX);
+        style.value.top = coerceCssPixelValue(originPoint.y - nowTop + offsetY);
+        // trigger change
+        style.value = style.value;
+        console.log(style.value.top, nowTop, offsetY);
+      }
     }
-    document.addEventListener('scroll', this.subscribe);
+    this.body.addEventListener('scroll', this.subscribe);
   }
 }
