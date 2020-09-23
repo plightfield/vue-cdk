@@ -49,6 +49,7 @@ export class OverlayState {
             that.detach();
           }
         };
+        const containerClass = that._getContainerClass();
         const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({ containerStyle: {}, positionedStyle: {} });
         let originDisplay = '';
 
@@ -81,7 +82,7 @@ export class OverlayState {
         return () => {
           return (
             <Teleport to="#vue-cdk-overlay">
-              <div style={styles.containerStyle} class="overlay_container_background" onClick={click}>
+              <div style={styles.containerStyle} class={containerClass} onClick={click}>
                 <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
                   {renderSlot(ctx.slots, 'default')}
                 </div>
@@ -96,6 +97,19 @@ export class OverlayState {
   _setOverflow(enable: boolean) {
     if (this.config.backgroundBlock) {
       this.body.style.overflow = enable ? 'hidden' : this.originOverflow;
+    }
+  }
+
+  _getContainerClass() {
+    let bgClasses = 'overlay_container_background ';
+    const backgroundClass = this.config.backgroundClass;
+    if (!backgroundClass) {
+      return bgClasses;
+    }
+    if (Array.isArray(backgroundClass)) {
+      return bgClasses + backgroundClass.join(' ');
+    } else {
+      return bgClasses + backgroundClass;
     }
   }
 }
