@@ -1,6 +1,9 @@
-import { InjectionKey } from "vue";
+import { inject, InjectionKey } from "vue";
 import { OverlayState } from "./overlay_state";
 import { OverlayConfig } from "./overlay_config";
+import { GlobalPositionStrategy } from './position/global_position_strategy';
+import { FlexiblePositionStrategy, FlexiblePositionStrategyOrigin } from './position/flexible_position_strategy';
+import { platformToken } from 'lib/global';
 
 /**
  * @description
@@ -15,5 +18,16 @@ export class OverlayService {
 
   create(config: OverlayConfig) {
     return new OverlayState(config, this.body);
+  }
+
+  createPositionStrategy(type: 'global'): GlobalPositionStrategy;
+  createPositionStrategy(type: 'flexible', origin: FlexiblePositionStrategyOrigin): FlexiblePositionStrategy;
+  createPositionStrategy(type: 'global' | 'flexible', ...args: any[]): FlexiblePositionStrategy | GlobalPositionStrategy {
+    if (type == "global") {
+      return new GlobalPositionStrategy();
+    } else {
+      const platform = inject(platformToken)!;
+      return new FlexiblePositionStrategy(args[0], platform.TOP!, platform.BODY!);
+    }
   }
 }

@@ -25,13 +25,6 @@ export default class Platform {
     ? document.body || document.documentElement || null
     : null;
 
-  /**
-   * use is to handle window
-   *
-   * @memberof Platform
-   */
-  readonly TOP = this.BROWSER ? window : null;
-
   readonly EDGE: boolean = this.BROWSER && /(edge)/i.test(navigator.userAgent);
 
   readonly TRIDENT: boolean =

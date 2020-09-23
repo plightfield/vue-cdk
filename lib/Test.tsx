@@ -9,8 +9,11 @@ export default defineComponent({
   setup() {
     return () => (
       <>
+        <h2>bidirection</h2>
         <BIDI />
+        <h2>breakpoint</h2>
         <BP />
+        <h2>platform</h2>
         <PLAT />
         <OverlayTest />
       </>

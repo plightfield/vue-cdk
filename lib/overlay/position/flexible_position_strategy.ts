@@ -36,13 +36,16 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   private currentPositionedStyle = ref<CSSProperties>({});
 
+
   
   private subscribe?: () => void;
 
   private isVisible = false;
 
   constructor(
-    private _origin: FlexiblePositionStrategyOrigin
+    private _origin: FlexiblePositionStrategyOrigin,
+    private window: Window, 
+    private body: HTMLElement,
   ) { }
 
   setup(): OverlayProps {
@@ -94,7 +97,7 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   dispose(): void {
     if (this.subscribe) {
-      document.removeEventListener('scroll', this.subscribe);
+      this.body.removeEventListener('scroll', this.subscribe);
     }
   }
 
@@ -227,8 +230,8 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     let offsetY = window.pageYOffset;
     this.subscribe = () => {
       if (this.isVisible) {
-        const nowTop = window.pageYOffset;
-        const nowLeft = window.pageXOffset;
+        const nowTop = this.window.pageYOffset;
+        const nowLeft = this.window.pageXOffset;
         style.value.left = coerceCssPixelValue(originPoint.x - nowLeft + offsetX);
         style.value.top = coerceCssPixelValue(originPoint.y - nowTop + offsetY);
         // trigger change
@@ -236,6 +239,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         console.log(style.value.top, nowTop, offsetY);
       }
     }
-    document.addEventListener('scroll', this.subscribe);
+    this.body.addEventListener('scroll', this.subscribe);
   }
 }

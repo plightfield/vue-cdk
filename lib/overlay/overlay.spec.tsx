@@ -24,7 +24,7 @@ export default defineComponent({
     const buttonWidget = ref();
 
     const globalOverlayRef = service.create({ 
-      strategy: new GlobalPositionStrategy().centerHorizontally().centerVertically() 
+      strategy: service.createPositionStrategy('global').centerHorizontally().centerVertically() 
     });
     const GlobalOverlay = globalOverlayRef.overlay;
 
@@ -33,7 +33,7 @@ export default defineComponent({
     }
 
     const flexibleOverlayRef1 = service.create({
-      strategy: new FlexiblePositionStrategy(target),
+      strategy: service.createPositionStrategy('flexible', target),
     });
     const FlexibleOverlay1 = flexibleOverlayRef1.overlay;
 
@@ -41,8 +41,10 @@ export default defineComponent({
       flexibleOverlayRef1.attach();
     };
 
+    service.createPositionStrategy('flexible', buttonWidget);
+
     const flexibleOverlayRef2 = service.create({
-      strategy: new FlexiblePositionStrategy(buttonWidget),
+      strategy: service.createPositionStrategy('flexible', buttonWidget),
     });
     const FlexibleOverlay2 = flexibleOverlayRef2.overlay;
 
