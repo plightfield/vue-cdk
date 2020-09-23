@@ -1,5 +1,5 @@
 import { defineComponent, inject } from "vue";
-import globalProvider, { platformToken } from ".";
+import { platformToken } from ".";
 
 const Widget = (props: { title: string; content: any }) => (
   <>
@@ -12,7 +12,6 @@ const Widget = (props: { title: string; content: any }) => (
 export default defineComponent({
   name: "platform-test",
   setup() {
-    globalProvider();
     const platform = inject(platformToken)!;
     return () => (
       <>
