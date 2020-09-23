@@ -96,6 +96,5 @@ export default class {
     this.viewportSize = this.isBrowser
       ? { width: window.innerWidth, height: window.innerHeight }
       : { width: 0, height: 0 };
-    console.log(this.viewportSize);
   }
 }
