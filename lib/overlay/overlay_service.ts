@@ -11,15 +11,9 @@ import { OverlayConfig } from "./overlay_config";
  * @interface OverlayService
  */
 export class OverlayService {
-  static key: InjectionKey<OverlayService> = Symbol('cdk-overlay');
-
-  constructor(private hostElement: HTMLElement) { }
+  constructor(private hostElement: HTMLElement, private body: HTMLElement) { }
 
   create(config: OverlayConfig) {
-    return new OverlayState(
-      config.strategy, 
-      config.backdropClose ?? true, 
-      config.backgroundBlock ?? true
-    );
+    return new OverlayState(config, this.body);
   }
 }

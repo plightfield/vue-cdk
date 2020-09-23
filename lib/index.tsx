@@ -4,12 +4,9 @@
 // ! cdk should not have any of upper cases
 // components
 import Test from "./Test";
-import OverlayTest from "./overlay/Test";
+import { overlayPlugin } from "./overlay";
 
-// functions
-import eventStream from "./eventStream";
-import immerRef from "./immerRef";
-import computedStream from "./computedStream";
+import OverlayTest from "./overlay/overlay.spec";
 
 /**
  * ruled component template name
@@ -29,15 +26,12 @@ function injectComponents(app: any, components: any[]) {
 export default {
   install(app: any, options: any) {
     injectComponents(app, [Test]);
+    overlayPlugin.install(app, options);
   },
-  eventStream,
-  immerRef,
-  computedStream,
   Test,
 };
 
 // import {xxx,xxx} from 'cdk'
-export const cdkEventStream = eventStream;
-export const cdkImmerRef = immerRef;
-export const cdkComputedStream = computedStream;
 export const CdkTest = Test;
+
+export * from './overlay';
