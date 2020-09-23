@@ -4,14 +4,23 @@ import Breakpoint from "./breakpoint";
 import Bidirection from "./bidirection";
 import Platform from "./platform";
 import Clipboard from "./clipboard";
+import AnimationSpy from "./animationSpy";
 
 // provide token
 export const platformToken = getClassToken(Platform);
 export const breakpointToken = getClassToken(Breakpoint);
 export const bidirectionToken = getClassToken(Bidirection);
 export const clipboardToken = getClassToken(Clipboard);
+export const animationSpyToken = getClassToken(AnimationSpy);
 
-// provide in single formation
+/**
+ * all the global apis will only have single instace
+ * *use in this formation
+ * * const xxx = inject(xxxToken)!
+ * singleton for performance
+ *
+ * @export
+ */
 export default function () {
   provide(platformToken, new Platform());
   // ! order should be manage carefully
@@ -19,4 +28,5 @@ export default function () {
   provide(breakpointToken, new Breakpoint());
   provide(bidirectionToken, new Bidirection());
   provide(clipboardToken, new Clipboard());
+  provide(animationSpyToken, new AnimationSpy());
 }
