@@ -45,7 +45,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
   constructor(
     private _origin: FlexiblePositionStrategyOrigin,
     private window: Window, 
-    private body: HTMLElement,
   ) { }
 
   setup(): OverlayProps {
@@ -97,7 +96,7 @@ export class FlexiblePositionStrategy implements PositionStrategy {
 
   dispose(): void {
     if (this.subscribe) {
-      this.body.removeEventListener('scroll', this.subscribe);
+      this.window.removeEventListener('scroll', this.subscribe);
     }
   }
 
@@ -236,9 +235,8 @@ export class FlexiblePositionStrategy implements PositionStrategy {
         style.value.top = coerceCssPixelValue(originPoint.y - nowTop + offsetY);
         // trigger change
         style.value = style.value;
-        console.log(style.value.top, nowTop, offsetY);
       }
     }
-    this.body.addEventListener('scroll', this.subscribe);
+    this.window.addEventListener('scroll', this.subscribe);
   }
 }
