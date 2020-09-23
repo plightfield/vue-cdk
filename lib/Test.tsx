@@ -2,7 +2,8 @@ import { defineComponent } from "vue";
 import BIDI from "./global/bidirection.spec";
 import BP from "./global/breakpoint.spec";
 import PLAT from "./global/platform.spec";
-import OverlayTest from './overlay/overlay.spec';
+import OVERLAY from './overlay/overlay.spec';
+import CB from "./global/clipboard.spec";
 
 export default defineComponent({
   name: "test",
@@ -15,7 +16,10 @@ export default defineComponent({
         <BP />
         <h2>platform</h2>
         <PLAT />
-        <OverlayTest />
+        <h2>overlay</h2>
+        <OVERLAY />
+        <h2>clipboard</h2>
+        <CB />
       </>
     );
   },

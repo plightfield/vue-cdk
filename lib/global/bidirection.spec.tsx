@@ -1,10 +1,9 @@
 import { defineComponent, inject } from "vue";
-import globalProvider, { bidirectionToken } from ".";
+import { bidirectionToken } from ".";
 
 export default defineComponent({
   name: "bidirection-spec",
   setup() {
-    globalProvider();
     const bidi = inject(bidirectionToken)!;
     return () => (
       <div>

@@ -1,10 +1,9 @@
 import { defineComponent, inject } from "vue";
-import globalProvider, { breakpointToken } from ".";
+import { breakpointToken } from ".";
 
 export default defineComponent({
   name: "breakpoint-spec",
   setup() {
-    globalProvider();
     const bp = inject(breakpointToken)!;
     return () => (
       <div>

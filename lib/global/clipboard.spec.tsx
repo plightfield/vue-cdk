@@ -1,12 +1,9 @@
 import { defineComponent, inject, ref } from "vue";
-import globalProvider, { clipboardToken } from ".";
-
-const Container = () => <div></div>;
+import { clipboardToken } from ".";
 
 export default defineComponent({
   name: "clipboard-spec",
   setup() {
-    globalProvider();
     const test = ref("test copy");
     const clipboard = inject(clipboardToken)!;
     const clip = () => {
