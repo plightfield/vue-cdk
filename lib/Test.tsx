@@ -6,6 +6,7 @@ import OVERLAY from "./overlay/overlay.spec";
 import CB from "./global/clipboard.spec";
 import VR from "./scrolling/viewportRuler.spec";
 import SB from "./scrolling/scrollable.spec";
+import ACCORDION from "./accordion/accordion.spec";
 
 export default defineComponent({
   name: "test",
@@ -26,6 +27,8 @@ export default defineComponent({
         <VR />
         <h2>scrollable</h2>
         <SB />
+        <h2>accordion</h2>
+        <ACCORDION />
       </>
     );
   },

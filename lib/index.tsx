@@ -5,8 +5,7 @@
 // components
 import Test from "./Test";
 import { overlayPlugin } from "./overlay";
-
-import OverlayTest from "./overlay/overlay.spec";
+import { collectionsPlugin } from './collections';
 
 /**
  * ruled component template name
@@ -27,6 +26,7 @@ export default {
   install(app: any, options: any) {
     injectComponents(app, [Test]);
     overlayPlugin.install(app, options);
+    collectionsPlugin.install(app, options);
   },
   Test,
 };

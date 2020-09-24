@@ -41,8 +41,6 @@ export default defineComponent({
       flexibleOverlayRef1.attach();
     };
 
-    service.createPositionStrategy('flexible', buttonWidget);
-
     const flexibleOverlayRef2 = service.create({
       strategy: service.createPositionStrategy('flexible', buttonWidget),
     });
@@ -60,7 +58,7 @@ export default defineComponent({
             ref={target}
             onClick={clickFlexiblePosition1}
             style="display: block; position: absolute; top: 300px; left: 300px; width: 200px;"
-          >click position</button>
+          >click flexible position</button>
         </div>
         <ButtonWidget 
           ref={buttonWidget}
