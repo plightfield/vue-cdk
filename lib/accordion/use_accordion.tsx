@@ -1,25 +1,8 @@
 import { CdkAny } from 'lib/types';
 import { VNodeChild, reactive } from 'vue';
-import { AccordionDispatcher, CdkAccordion } from './accordion';
+import { AccordionDispatcher, CdkAccordionContainer } from './accordion_container';
 import { AccordionItemSlotProps, CdkAccordionItem } from './accordion_item';
-
-
-// accordion dispatcher wrapper
-// when getting the slot props
-// you will need it.
-export interface AccordionSlotProps {
-  dispatcher: AccordionDispatcher;
-}
-
-// accordion item slot builder
-export type AccordionItemSlotBuilder = (state: AccordionItemSlotProps) => VNodeChild | CdkAny
-
-
-// accordion item builder
-export type AccordionItemBuilder = (
-  dispatcher: AccordionDispatcher,
-) => VNodeChild | CdkAny;
-
+import { AccordionItemBuilder, AccordionItemSlotBuilder, AccordionSlotProps } from './accordion_type';
 
 export const useAccordionItem = (
   dispatcher: AccordionDispatcher,
@@ -58,11 +41,11 @@ export const useAccordion = (builders: AccordionItemSlotBuilder[]) => {
   };
 
   const element = () => (
-    <CdkAccordion
+    <CdkAccordionContainer
       expanded={state.expanded}
       multi={state.multi}
       v-slots={accordionSlots}
-    ></CdkAccordion>
+    ></CdkAccordionContainer>
   )
 
   return {
@@ -93,11 +76,11 @@ export const useCustomAccordion = (builders: AccordionItemBuilder[]) => {
   };
 
   const element = () => (
-    <CdkAccordion
+    <CdkAccordionContainer
       expanded={state.expanded}
       multi={state.multi}
       v-slots={accordionSlots}
-    ></CdkAccordion>
+    ></CdkAccordionContainer>
   )
 
   return {

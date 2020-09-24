@@ -1,58 +1,73 @@
-import { defineComponent, renderSlot, toRef, watch } from "vue";
+import { defineComponent, DefineComponent, reactive } from "vue";
+import { CdkAccordionContainer } from './accordion_container';
+import { CdkAccordionItem } from './accordion_item';
+import { AccordionDispatcher } from './accordion_dispatcher';
+import { AccordionItemSlotBuilder, AccordionItemSlotProps, AccordionSlotProps } from './accordion_type';
 
+export class Accordion {
+  private readonly state = reactive({
+    multi: false,
+    expanded: false
+  });
 
-/**
- * @description
- * 
- * @date 2020-09-24
- * @export
- * @class AccordionDispatcher
- */
-export class AccordionDispatcher {
-  readonly subscribers: ((value: boolean) => void)[] = [];
+  public readonly element: DefineComponent;
 
-  subscribe(next: (value: boolean) => void) {
-    this.subscribers.push(next);
+  constructor(builders: AccordionItemSlotBuilder[]) {
+    this.element = this.render(builders);
   }
 
-  notify(value: boolean) {
-    this.subscribers.forEach(fn => fn?.(value))
+  get expanded() {
+    return this.state.expanded;
   }
-}
 
+  get multi() {
+    return this.state.multi;
+  }
 
-/**
- * @description
- * 
- * @date 2020-09-24
- * @export
- * @component CdkAccordion
- */
-export const CdkAccordion = defineComponent({
-  props: {
-    multi: {
-      type: Boolean,
-      default: false,
-    },
-    expanded: {
-      type: Boolean,
-      default: false
-    }
-  },
-  name: 'cdk-accordion',
-  setup(props, ctx) {
-    const dispatcher = new AccordionDispatcher();
+  set multi(value: boolean) {
+    this.state.multi = value;
+  }
 
-    watch(toRef(props, 'expanded'), (value) => {
-      if (props.multi) {
-        dispatcher.notify(value);
-      }
-    });
-    
-    return () => (
-      <>      
-        {renderSlot(ctx.slots, 'default', {dispatcher})}
-      </>
+  openAll() {
+    this.state.expanded = true;
+  }
+
+  closeAll() {
+    this.state.expanded = false;
+  }
+
+  private accordionItem(
+    dispatcher: AccordionDispatcher,
+    builder: AccordionItemSlotBuilder,
+  ) {
+    const slots = {
+      default: (state: AccordionItemSlotProps) => builder(state),
+    };
+    return (
+      <CdkAccordionItem
+        dispatcher={dispatcher}
+        v-slots={slots}
+      ></CdkAccordionItem>
     );
   }
-});
+
+  private render(builders: AccordionItemSlotBuilder[]) {
+    return defineComponent(() => {
+      const accordionSlots = {
+        default: ({ dispatcher }: AccordionSlotProps) => {
+          return builders.map((builder) => {
+            return this.accordionItem(dispatcher, builder);
+          });
+        }
+      };
+  
+      return () => (
+        <CdkAccordionContainer
+          expanded={this.state.expanded}
+          multi={this.state.multi}
+          v-slots={accordionSlots}
+        ></CdkAccordionContainer>
+      );
+    });
+  }
+}

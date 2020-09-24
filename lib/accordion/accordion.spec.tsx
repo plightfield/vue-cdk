@@ -1,6 +1,6 @@
-import { defineComponent, reactive, renderList, VNode, VNodeChild } from "vue";
-import { AccordionItemSlotProps } from './accordion_item';
-import { useAccordion } from './use_accordion';
+import { defineComponent, reactive } from "vue";
+import { Accordion } from './accordion';
+import { AccordionItemSlotProps } from './accordion_type';
 
 const widgetFactory = (value: number) => (state: AccordionItemSlotProps) => [
   <p>
@@ -18,22 +18,22 @@ export default defineComponent({
   name: 'cdk-accordion-test',
   setup() {
     const array = reactive([1, 2, 3, 4, 5]);
-    const accordion = useAccordion(array.map(widgetFactory));
+    const accordion = new Accordion(array.map(widgetFactory));
     return () => (
       <>
         <div>
-          accordion is {accordion.state.multi ? 'multi' : 'single'}
+          accordion is {accordion.multi ? 'multi' : 'single'}
         </div>
         <button
-          onClick={() => accordion.state.multi = !accordion.state.multi}
+          onClick={() => accordion.multi = !accordion.multi}
           style="display: block;"
         >
           click me
         </button>
         <button
-          onClick={() => accordion.state.expanded = !accordion.state.expanded}
+          onClick={() => accordion.expanded ? accordion.closeAll() : accordion.openAll()}
         >
-          {accordion.state.expanded ? 'close' : 'open'}
+          {accordion.expanded ? 'close' : 'open'}
         </button>
 
         <accordion.element />

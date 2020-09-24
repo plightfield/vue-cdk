@@ -1,9 +1,6 @@
-import { defineComponent, reactive, renderSlot, toRef, watch} from "vue";
-import { AccordionDispatcher } from './accordion';
-
-export interface AccordionItemSlotProps { 
-  expanded: boolean;
-}
+import { defineComponent, reactive, renderSlot } from "vue";
+import { AccordionDispatcher } from './accordion_dispatcher';
+import { AccordionItemSlotProps } from './accordion_type';
 
 /**
  * @description
