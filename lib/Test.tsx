@@ -7,6 +7,7 @@ import CB from "./global/clipboard.spec";
 import VR from "./scrolling/viewportRuler.spec";
 import SB from "./scrolling/scrollable.spec";
 import ACCORDION from "./accordion/accordion.spec";
+import VS from "./scrolling/VirtualScroll.spec";
 
 export default defineComponent({
   name: "test",
@@ -29,6 +30,8 @@ export default defineComponent({
         <SB />
         <h2>accordion</h2>
         <ACCORDION />
+        <h2>virtual scroll</h2>
+        <VS />
       </>
     );
   },
