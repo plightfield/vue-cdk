@@ -1,7 +1,7 @@
 import { defineComponent, reactive, renderSlot, toRef, watch} from "vue";
 import { AccordionDispatcher } from './accordion';
 
-export default defineComponent({
+export const CdkAccordionItem = defineComponent({
   name: 'cdk-accordion-item',
   props: {
     dispatcher: {
