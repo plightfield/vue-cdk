@@ -1,3 +1,3 @@
-export * from './accordion';
-export * from './accordion_item';
+export { CdkAccordion } from './accordion';
+export { CdkAccordionItem } from './accordion_item';
 export * from './use_accordion';

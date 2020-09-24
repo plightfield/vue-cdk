@@ -1,5 +1,13 @@
 import { defineComponent, renderSlot, toRef, watch } from "vue";
 
+
+/**
+ * @description
+ * 
+ * @date 2020-09-24
+ * @export
+ * @class AccordionDispatcher
+ */
 export class AccordionDispatcher {
   readonly subscribers: ((value: boolean) => void)[] = [];
 
@@ -12,6 +20,14 @@ export class AccordionDispatcher {
   }
 }
 
+
+/**
+ * @description
+ * 
+ * @date 2020-09-24
+ * @export
+ * @component CdkAccordion
+ */
 export const CdkAccordion = defineComponent({
   props: {
     multi: {
