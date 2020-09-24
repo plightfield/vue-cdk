@@ -76,7 +76,9 @@ export default class {
     if (options.right === undefined) {
       options.right = isRtl ? options.start : options.end;
     }
-    console.log(options);
+    if (options.bottom !== undefined) {
+      options.top = el.scrollHeight - el.clientHeight - options.bottom;
+    }
     if (isRtl && this.getScrollAxisType() !== ScrollAxisType.normal) {
       if (options.left !== undefined) {
         options.right = el.scrollWidth - el.clientWidth - options.left;
@@ -92,7 +94,6 @@ export default class {
         options.left = el.scrollWidth - el.clientWidth - options.right;
       }
     }
-    console.log(options);
     this.applyScrollToOptions(options);
   };
 
@@ -159,7 +160,7 @@ export default class {
       this.scrollAxisType = ScrollAxisType.normal;
       return this.scrollAxisType;
     }
-    if (this.scrollAxisType === null) {
+    if (this.scrollAxisType === undefined) {
       const container = document.createElement("div");
       container.dir = "rtl";
       container.style.width = "1px";
