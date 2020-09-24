@@ -1,5 +1,6 @@
-import { defineAsyncComponent, defineComponent, reactive, toRaw } from "vue";
-import Scrollable, { ScrollAxisType, ScrollToOptions } from "./scrollable";
+import { defineComponent, reactive, ref, toRaw } from "vue";
+import Scrollable, { ScrollToOptions } from "./scrollable";
+import "./scrollable.spec.css";
 
 export default defineComponent({
   name: "scrollable-spec",
@@ -13,24 +14,22 @@ export default defineComponent({
       right: 0,
       bottom: 0,
     });
+    const targetRef = ref<HTMLElement | null>(null);
     return () => (
       <>
-        <div
-          style='width:100px;height:100px;overflow:auto'
-          ref={scrollable.nodeRef}
-        >
-          <div style='width:200px;'>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>target</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-            <p>scrollTo scrollTo</p>
-          </div>
+        <div class='scrollable-spec-container' ref={scrollable.nodeRef}>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p style='color:red' ref={targetRef}>
+            target
+          </p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
+          <p>scrollTo scrollTo scrollTo</p>
         </div>
         left:
         <input v-model={options.left} />
@@ -65,6 +64,14 @@ export default defineComponent({
           }}
         >
           scroll to
+        </button>
+        <button
+          onClick={() => {
+            console.log(scrollable.nodeRef.value?.scrollTop);
+            scrollable.scrollToElement(targetRef);
+          }}
+        >
+          scroll to target
         </button>
       </>
     );

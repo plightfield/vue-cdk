@@ -63,6 +63,18 @@ export default class {
   }
 
   /**
+   * scroll to specific target
+   * !never forget relative position of scrollable ref
+   * !never forget param nodeRef is direct child of scrollable ref
+   *
+   */
+  scrollToElement = (nodeRef: Ref<HTMLElement | null>) => {
+    if (!nodeRef.value) return;
+    const el = nodeRef.value;
+    this.scrollTo({ top: el.offsetTop, left: el.offsetLeft });
+  };
+
+  /**
    * pre handle scroll to options
    *
    */
