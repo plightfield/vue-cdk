@@ -5,13 +5,10 @@ export default defineComponent({
   name: "viewport-ruler-spec",
   setup() {
     const viewport = new ViewportRuler();
-    const size = ref({ width: 0, height: 0 });
-    onMounted(() => {
-      size.value = viewport.getViewportRect();
-    });
+    const rect = viewport.viewportRect;
     return () => (
       <div>
-        <p>{JSON.stringify(size.value)}</p>
+        <p>{JSON.stringify(rect.value)}</p>
       </div>
     );
   },

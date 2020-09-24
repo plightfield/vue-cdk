@@ -5,6 +5,7 @@ import PLAT from "./global/platform.spec";
 import OVERLAY from "./overlay/overlay.spec";
 import CB from "./global/clipboard.spec";
 import VR from "./scrolling/viewportRuler.spec";
+import SB from "./scrolling/scrollable.spec";
 
 export default defineComponent({
   name: "test",
@@ -23,6 +24,8 @@ export default defineComponent({
         <CB />
         <h2>viewport ruler</h2>
         <VR />
+        <h2>scrollable</h2>
+        <SB />
       </>
     );
   },

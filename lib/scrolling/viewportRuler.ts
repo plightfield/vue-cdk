@@ -1,9 +1,23 @@
-import { inject, onBeforeUnmount } from "vue";
+import { computed, inject, onBeforeUnmount, ref, Ref } from "vue";
 import { platformToken } from "../global";
 
 export interface ViewportScrollPosition {
   top: number;
   left: number;
+}
+
+export interface ViewportSize {
+  width: number;
+  height: number;
+}
+
+export interface ViewportRect {
+  top: number;
+  left: number;
+  bottom: number;
+  right: number;
+  height: number;
+  width: number;
 }
 
 /**
@@ -16,85 +30,67 @@ export interface ViewportScrollPosition {
  * @class
  */
 export default class {
-  private viewportSize!: { width: number; height: number };
+  viewportSize = ref<ViewportSize>(null!);
+  viewportRect: Ref<ViewportRect>;
   private isBrowser: boolean;
-  constructor() {
-    this.isBrowser = inject(platformToken)!.BROWSER;
-    if (!this.isBrowser) return;
-    window.addEventListener("resize", this.changeListener.bind(this));
-    window.addEventListener(
-      "orientationchange",
-      this.changeListener.bind(this)
-    );
-
-    onBeforeUnmount(() => {
-      window.removeEventListener("resize", this.changeListener.bind(this));
-      window.removeEventListener(
-        "orientationchange",
-        this.changeListener.bind(this)
-      );
-    });
-  }
-
-  changeListener() {
-    this.updateViewportSize.bind(this)();
-  }
 
   /**
-   * get size data
+   * change windowSize
    *
-   * @returns
+   * @private
    */
-  getViewportSize() {
-    if (!this.viewportSize) {
-      this.updateViewportSize.bind(this)();
-    }
-    if (!this.isBrowser) {
-      this.viewportSize = null!;
-    }
-
-    return { ...this.viewportSize };
-  }
-
-  /**
-   * get rect data
-   *
-   * @returns {ClientRect}
-   */
-  getViewportRect(): ClientRect {
-    const scrollPosition = this.getViewportScrollPosition.bind(this)();
-    const { width, height } = this.getViewportSize.bind(this)();
-    return {
-      top: scrollPosition.top,
-      left: scrollPosition.left,
-      bottom: scrollPosition.top + height,
-      right: scrollPosition.left + width,
-      height,
-      width,
-    };
-  }
+  updateViewportSize = () => {
+    this.viewportSize.value = this.isBrowser
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: 0, height: 0 };
+  };
 
   /**
    * get viewport position by top left corner position
    *
-   * @returns {ViewportScrollPosition}
+   * @private
    */
-  getViewportScrollPosition(): ViewportScrollPosition {
+  private getViewportScrollPosition = () => {
     if (!this.isBrowser) return { top: 0, left: 0 };
     const body = document.documentElement || document.body;
     const rect = body.getBoundingClientRect();
     const top = -rect.top || body.scrollTop || window.scrollY;
     const left = -rect.left || body.scrollLeft || window.scrollX;
-    return { top, left };
-  }
+    return { top, left } as ViewportScrollPosition;
+  };
+  constructor() {
+    this.isBrowser = inject(platformToken)!.BROWSER;
+    if (!this.isBrowser) {
+      this.viewportRect = ref({
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        height: 0,
+        width: 0,
+      });
+      return;
+    }
+    // updateOnInit
+    this.updateViewportSize();
+    this.viewportRect = computed(() => {
+      const { top, left } = this.getViewportScrollPosition();
+      const { width, height } = this.viewportSize.value;
+      return {
+        top: top,
+        left: left,
+        bottom: top + height,
+        right: left + width,
+        height,
+        width,
+      };
+    });
+    window.addEventListener("resize", this.updateViewportSize);
+    window.addEventListener("orientationchange", this.updateViewportSize);
 
-  /**
-   * update the viewport size
-   *
-   */
-  updateViewportSize() {
-    this.viewportSize = this.isBrowser
-      ? { width: window.innerWidth, height: window.innerHeight }
-      : { width: 0, height: 0 };
+    onBeforeUnmount(() => {
+      window.removeEventListener("resize", this.updateViewportSize);
+      window.removeEventListener("orientationchange", this.updateViewportSize);
+    });
   }
 }
