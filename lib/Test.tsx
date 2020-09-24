@@ -5,6 +5,7 @@ import PLAT from "./global/platform.spec";
 import OVERLAY from './overlay/overlay.spec';
 import CB from "./global/clipboard.spec";
 import ACCORDION from './accordion/accordion.spec';
+import TABLE from './table/table.spec';
 
 export default defineComponent({
   name: "test",
@@ -23,6 +24,8 @@ export default defineComponent({
         <CB />
         <h2>accordion</h2>
         <ACCORDION />
+        <h2>table</h2>
+        <TABLE />
       </>
     );
   },

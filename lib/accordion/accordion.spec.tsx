@@ -1,5 +1,5 @@
 import { defineComponent, reactive } from "vue";
-import { Accordion } from './accordion';
+import { CdkAccordion } from './accordion';
 import { AccordionItemSlotProps } from './accordion_type';
 
 const widgetFactory = (value: number) => (state: AccordionItemSlotProps) => [
@@ -15,10 +15,10 @@ const widgetFactory = (value: number) => (state: AccordionItemSlotProps) => [
 ]
 
 export default defineComponent({
-  name: 'cdk-accordion-test',
+  name: 'cdk-accordion-spec',
   setup() {
     const array = reactive([1, 2, 3, 4, 5]);
-    const accordion = new Accordion(array.map(widgetFactory));
+    const accordion = new CdkAccordion(array.map(widgetFactory));
     return () => (
       <>
         <div>

@@ -4,7 +4,7 @@ import { CdkAccordionItem } from './accordion_item';
 import { AccordionDispatcher } from './accordion_dispatcher';
 import { AccordionItemSlotBuilder, AccordionItemSlotProps, AccordionSlotProps } from './accordion_type';
 
-export class Accordion {
+export class CdkAccordion {
   private readonly state = reactive({
     multi: false,
     expanded: false
