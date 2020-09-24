@@ -1,48 +1,41 @@
-import { method } from "lodash";
-import { defineComponent, Directive, DirectiveBinding, reactive, ref, renderSlot, watch } from "vue";
+import { defineComponent, renderSlot, toRef, watch } from "vue";
 
-let nextId = 0;
+export class AccordionDispatcher {
+  readonly subscribers: ((value: boolean) => void)[] = [];
 
-export const accordion: Directive = {
-  mounted(el, binding: DirectiveBinding) {
-    
+  subscribe(next: (value: boolean) => void) {
+    this.subscribers.push(next);
+  }
+
+  notify(value: boolean) {
+    this.subscribers.forEach(fn => fn?.(value))
   }
 }
 
-export interface AccordionProps {
-  multi: boolean;
-  onExpanded: (value: boolean) => void;
-}
-
-export default defineComponent({
-  // props: {
-  //   multi: {
-  //     type: Boolean,
-  //     default: false,
-  //   }
-  // },
-  props: ['multi'],
+export const CdkAccordion = defineComponent({
+  props: {
+    multi: {
+      type: Boolean,
+      default: false,
+    },
+    expanded: {
+      type: Boolean,
+      default: false
+    }
+  },
   name: 'cdk-accordion',
   setup(props, ctx) {
-    const expanded = ref(false);
+    const dispatcher = new AccordionDispatcher();
 
-    watch(expanded, (value) => {
-      // props.onExpanded(value);
+    watch(toRef(props, 'expanded'), (value) => {
+      if (props.multi) {
+        dispatcher.notify(value);
+      }
     });
-  },
-
-  data(): {id: string, expanded: boolean} {
-    return {
-      id: `cdk_accordion_${nextId++}`,
-      expanded: false,
-    };
-  },
-
-  render() {
-    return (
-      <>
-        {`${this.$data.expanded}`}
-        {renderSlot(this.$slots, 'default')}
+    
+    return () => (
+      <>      
+        {renderSlot(ctx.slots, 'default', {dispatcher})}
       </>
     );
   }

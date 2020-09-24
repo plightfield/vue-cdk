@@ -1,35 +1,33 @@
-import { defineComponent, h, inject, ref, render, renderSlot} from "vue";
-import { uniqueSelectionDispatcherToken } from "../collections";
-
-let nextId = 0;
+import { defineComponent, reactive, renderSlot, toRef, watch} from "vue";
+import { AccordionDispatcher } from './accordion';
 
 export default defineComponent({
   name: 'cdk-accordion-item',
-
-  props:{
-    expanded: {
-      type: Boolean,
-      default: false,
+  props: {
+    dispatcher: {
+      type: AccordionDispatcher,
+      default: new AccordionDispatcher(),
     },
-    onOpened: {
+    onExpanded: {
       type: Function,
-    }
+    },
   },
 
   setup(props, ctx) {
-    const expanded = ref(false);
-    console.log(ctx.slots); 
+    const state = reactive({expanded: false});
+
+    props.dispatcher.subscribe((value: boolean) => {
+      state.expanded = value;
+    });
+
+    watch(toRef(state, 'expanded'), (value) => {
+      console.log('value', value);
+    });
+
     return () => (
       <>
-        {renderSlot(ctx.slots, 'default', {expanded})}
+        {renderSlot(ctx.slots, 'default', state)}
       </>
     );
-  },
-
-  mounted() {
-    const dispatcher = inject(uniqueSelectionDispatcherToken);
-    if (this.$parent) {
-      (this.$parent.$data as any).expanded = true;
-    }
-  },
+  }
 });
