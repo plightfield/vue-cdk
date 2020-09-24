@@ -1,6 +1,6 @@
 import { VNodeChild } from "vue";
-import { AccordionDispatcher } from "./accordion_container";
 import { CdkAny } from '../types';
+import { AccordionDispatcher } from './accordion_dispatcher';
 
 // accordion dispatcher wrapper
 // when getting the slot props
