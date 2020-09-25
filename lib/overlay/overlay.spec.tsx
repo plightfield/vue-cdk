@@ -23,31 +23,31 @@ export default defineComponent({
     const target = ref<Element>();
     const buttonWidget = ref();
 
-    const globalOverlayRef = service.create({ 
+    const globalOverlayState = service.create({ 
       strategy: service.createPositionStrategy('global').centerHorizontally().centerVertically() 
     });
-    const GlobalOverlay = globalOverlayRef.overlay;
+    const GlobalOverlay = globalOverlayState.element;
 
     const click = () => {
-      globalOverlayRef.attach();
+      globalOverlayState.attach();
     }
 
-    const flexibleOverlayRef1 = service.create({
+    const flexibleOverlayState1 = service.create({
       strategy: service.createPositionStrategy('flexible', target),
     });
-    const FlexibleOverlay1 = flexibleOverlayRef1.overlay;
+    const FlexibleOverlay1 = flexibleOverlayState1.element;
 
     const clickFlexiblePosition1 = () => {
-      flexibleOverlayRef1.attach();
+      flexibleOverlayState1.attach();
     };
 
-    const flexibleOverlayRef2 = service.create({
+    const flexibleOverlayState2 = service.create({
       strategy: service.createPositionStrategy('flexible', buttonWidget),
     });
-    const FlexibleOverlay2 = flexibleOverlayRef2.overlay;
+    const FlexibleOverlay2 = flexibleOverlayState2.element;
 
     const clickFlexiblePosition2 = () => {
-      flexibleOverlayRef2.attach();
+      flexibleOverlayState2.attach();
     };
 
     return () => (

@@ -15,7 +15,8 @@ import { OverlayConfig } from '.';
 import './overlay_state.css';
 
 export class OverlayState {
-  public readonly overlay: DefineComponent;
+  public readonly element: DefineComponent;
+
   private readonly show = ref(false);
 
   private readonly originOverflow = this.body.style.overflow;
@@ -24,7 +25,7 @@ export class OverlayState {
     private readonly config: OverlayConfig,
     private body: HTMLElement,
   ) {
-    this.overlay = this.render();
+    this.element = this.render();
   }
 
   attach(): void {
@@ -40,6 +41,7 @@ export class OverlayState {
   render(): DefineComponent {
     const that = this;
     return defineComponent({
+      name: 'cdk-overlay',
       setup(props, ctx: SetupContext) {
         const click = (event: Event) => {
           event.preventDefault();
