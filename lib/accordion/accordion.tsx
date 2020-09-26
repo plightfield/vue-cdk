@@ -37,36 +37,22 @@ export class CdkAccordion {
   }
 
   private accordionItem(
-    dispatcher: AccordionDispatcher,
     builder: AccordionItemSlotBuilder,
   ) {
     const slots = {
       default: (state: AccordionItemSlotProps) => builder(state),
     };
     return (
-      <CdkAccordionItem
-        dispatcher={dispatcher}
-        v-slots={slots}
-      ></CdkAccordionItem>
+      <CdkAccordionItem v-slots={slots}></CdkAccordionItem>
     );
   }
 
   private render(builders: AccordionItemSlotBuilder[]) {
     return defineComponent(() => {
-      const accordionSlots = {
-        default: ({ dispatcher }: AccordionSlotProps) => {
-          return builders.map((builder) => {
-            return this.accordionItem(dispatcher, builder);
-          });
-        }
-      };
-  
       return () => (
-        <CdkAccordionContainer
-          expanded={this.state.expanded}
-          multi={this.state.multi}
-          v-slots={accordionSlots}
-        ></CdkAccordionContainer>
+        <CdkAccordionContainer expanded={this.state.expanded} multi={this.state.multi}>
+          {builders.map((builder) => this.accordionItem(builder))}
+        </CdkAccordionContainer>
       );
     });
   }

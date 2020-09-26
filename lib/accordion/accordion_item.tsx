@@ -1,4 +1,4 @@
-import { defineComponent, reactive, renderSlot } from "vue";
+import { defineComponent, inject, reactive, renderSlot } from "vue";
 import { AccordionDispatcher } from './accordion_dispatcher';
 import { AccordionItemSlotProps } from './accordion_type';
 
@@ -11,17 +11,11 @@ import { AccordionItemSlotProps } from './accordion_type';
  */
 export const CdkAccordionItem = defineComponent({
   name: 'cdk-accordion-item',
-  props: {
-    dispatcher: {
-      type: AccordionDispatcher,
-      default: new AccordionDispatcher(),
-    }
-  },
 
   setup(props, ctx) {
     const state = reactive<AccordionItemSlotProps>({expanded: false});
-
-    props.dispatcher.subscribe((value: boolean) => {
+    const dispatcher = inject(AccordionDispatcher.key)!;
+    dispatcher.subscribe((value: boolean) => {
       state.expanded = value;
     });
 

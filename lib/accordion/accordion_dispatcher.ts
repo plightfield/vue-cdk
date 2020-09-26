@@ -1,3 +1,5 @@
+import { InjectionKey, provide } from 'vue';
+
 /**
  * @description
  * 
@@ -6,7 +8,14 @@
  * @class AccordionDispatcher
  */
 export class AccordionDispatcher {
+
+  static key: InjectionKey<AccordionDispatcher> = Symbol('cdk-accordion-dispatcher');
+
   readonly subscribers: ((value: boolean) => void)[] = [];
+
+  constructor() {
+    provide(AccordionDispatcher.key, this);
+  }
 
   subscribe(next: (value: boolean) => void) {
     this.subscribers.push(next);
