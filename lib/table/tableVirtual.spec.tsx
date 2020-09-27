@@ -19,7 +19,7 @@ export default defineComponent({
     const virtualScroll = new VirtualScroll(dataSource);
     return () => (
       <VirtualContainer style='height:200px;overflow:auto;position:relative'>
-        <table style='table-layout:fixed'>
+        <table style='table-layout:fixed;width:100%'>
           <caption>test table</caption>
           <thead>
             <tr>
@@ -43,8 +43,8 @@ export default defineComponent({
               </tr>
             ))}
           </tbody>
-          <tfoot></tfoot>
         </table>
+        <tfoot style='width:100%'></tfoot>
       </VirtualContainer>
     );
   },
