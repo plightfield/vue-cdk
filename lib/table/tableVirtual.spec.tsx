@@ -21,7 +21,7 @@ export default defineComponent({
       <VirtualContainer style='height:200px;overflow:auto;position:relative'>
         <table style='table-layout:fixed;width:100%'>
           <caption>test table</caption>
-          <thead>
+          <thead style='position:sticky'>
             <tr>
               {headers.map((el) => (
                 <th key={el}>{el}</th>
