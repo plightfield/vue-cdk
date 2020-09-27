@@ -31,6 +31,7 @@ export default class VirtualScroll {
   before = ref(0);
   totalHeight = ref(0);
   // others
+  // items that will display on the viewer
   displayItems: VirtualItemData[] = [];
   containerRef = ref<HTMLElement | null>(null);
   private scrollable = new Scrollable();
@@ -69,6 +70,7 @@ export default class VirtualScroll {
     this.items = items;
     onMounted(() => {
       this.handleChange();
+      console.log(this);
     });
     this.scrollable.nodeRef = this.containerRef;
     this.scrollable.scrollCb = this.handleChange;
