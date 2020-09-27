@@ -8,7 +8,6 @@ import VR from "./scrolling/viewportRuler.spec";
 import SB from "./scrolling/scrollable.spec";
 import ACCORDION from "./accordion/accordion.spec";
 import VS from "./scrolling/VirtualScroll.spec";
-import TABLE from "./table/table.spec";
 
 export default defineComponent({
   name: "test",
@@ -33,8 +32,6 @@ export default defineComponent({
         <ACCORDION />
         <h2>virtual scroll</h2>
         <VS />
-        <h2>table</h2>
-        <TABLE />
       </>
     );
   },

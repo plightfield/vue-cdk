@@ -31,7 +31,7 @@ export const CdkAccordionContainer = defineComponent({
     
     return () => (
       <>      
-        {renderSlot(ctx.slots, 'default', {dispatcher})}
+        {renderSlot(ctx.slots, 'default')}
       </>
     );
   }
