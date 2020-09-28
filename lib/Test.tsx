@@ -9,6 +9,7 @@ import SB from "./scrolling/scrollable.spec";
 import ACCORDION from "./accordion/accordion.spec";
 import VS from "./scrolling/VirtualScroll.spec";
 import TV from "./table/tableVirtual.spec";
+import TR from "./tree/TreeNode.spec";
 
 export default defineComponent({
   name: "test",
@@ -35,6 +36,8 @@ export default defineComponent({
         <VS />
         <h2>virtual table</h2>
         <TV />
+        <h2>tree</h2>
+        <TR />
       </>
     );
   },
