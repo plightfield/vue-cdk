@@ -1,4 +1,4 @@
-import { InjectionKey } from "vue";
+import { InjectionKey, nextTick, Ref, ref, watch } from "vue";
 
 /**
  * *handle typescript type by function
@@ -38,4 +38,35 @@ export function getClassToken<T>(
     return name as any;
   }
   return Symbol();
+}
+
+/**
+ * mark a component or service to dirty
+ * so that all the value will reactive once
+ *
+ * @export
+ * @returns
+ */
+export function markDirty() {
+  const dirty = ref<null | undefined>(null);
+  const mark = () => {
+    dirty.value = dirty.value === null ? undefined : null;
+  };
+  return {
+    dirty,
+    mark,
+  };
+}
+
+/**
+ * sub component react to service's dirty ref
+ *
+ * @export
+ * @param {(Ref<null | undefined>)} dirty
+ * @returns
+ */
+export function reactToService(dirty: Ref<null | undefined>) {
+  const { dirty: localDirty, mark } = markDirty();
+  watch(dirty, mark);
+  return localDirty;
 }

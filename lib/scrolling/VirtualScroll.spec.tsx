@@ -1,11 +1,11 @@
-import VirtualContainer from "./VirtualContainer";
 import { defineComponent } from "vue";
-import VirtualScroll, { VirtualItemData } from "./virtualScroll";
+import VirtualContainer from "./VirtualContainer";
+import VirtualScroll from "./virtualScroll";
 
 export default defineComponent({
   name: "virtual-scroll-spec",
   setup() {
-    const arr: VirtualItemData[] = [];
+    const arr: any[] = [];
     for (let i = 0; i < 1000000; i++) {
       arr.push({ name: "test" });
     }
@@ -20,7 +20,7 @@ export default defineComponent({
               backgroundColor: "black",
               color: "white",
               padding: "1em",
-              height: virtualScroll.getHeight(key),
+              height: el._itemHeight || el._defaultHeight,
             }}
           >
             {el.name}
