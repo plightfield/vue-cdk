@@ -4,24 +4,28 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "test": "vue-cli-service test:unit",
+    "cover": "vue-cli-service test:unit --coverage"
   },
   "dependencies": {
     "async-validator": "^3.4.0",
     "core-js": "^3.6.5",
-    "immutable": "^4.0.0-rc.12",
-    "rxjs": "^6.6.3",
-    "vue": "^3.0.0-10"
+    "lodash": "^4.17.20",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.14",
     "@types/lodash": "^4.14.161",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "^4.5.6",
+    "@vue/cli-service": "^4.5.6",
     "@vue/compiler-sfc": "^3.0.0-0",
+    "@vue/test-utils": "^2.0.0-beta.5",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
-    "lodash": "^4.17.20",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "vue-jest": "^5.0.0-alpha.4"
   }
 }

@@ -16,7 +16,10 @@ export default class {
   beforeHeight = 0;
   totalHeight = 0;
 
-  // scrollable container
+  /**
+   * scrollable container
+   *
+   */
   containerRef = ref<HTMLElement | null>(null);
   scrollable: Scrollable;
   scrollTop = 0;
@@ -72,5 +75,14 @@ export default class {
       this.handleChange();
     });
     provide("cdk-virtual-scroll", this);
+  }
+
+  /**
+   * scroll to certain position
+   *
+   * @param {ScrollToOptions} opt
+   */
+  scrollTo(opt: ScrollToOptions) {
+    this.scrollable.scrollTo(opt);
   }
 }

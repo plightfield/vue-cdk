@@ -1,10 +1,13 @@
+import { mount, VueWrapper } from "@vue/test-utils";
 import { defineComponent } from "vue";
-import VirtualContainer from "./VirtualContainer";
+import globalInit from "../global";
 import VirtualScroll from "./virtualScroll";
+import VirtualContainer from "./VirtualContainer";
 
-export default defineComponent({
-  name: "virtual-scroll-spec",
-  setup() {
+const VirtualScrollTester = defineComponent({
+  name: "virtual-scroll-tester",
+  setup(_, ctx) {
+    globalInit();
     const arr: any[] = [];
     for (let i = 0; i < 1000000; i++) {
       arr.push({ name: "test" });
@@ -29,4 +32,19 @@ export default defineComponent({
       </VirtualContainer>
     );
   },
+});
+
+let compo: VueWrapper<any>;
+beforeEach(() => {
+  compo = mount(VirtualScrollTester);
+});
+describe("cdk-virtual-scroll", () => {
+  it("will mount successfully", () => {
+    expect(compo).toBeTruthy();
+  });
+  it("will never change the initialized template or css", () => {
+    expect(compo.html()).toBe(
+      `<div style=\"position: relative; overflow: auto; height: 200px;\"><!----><div style=\"height: 40000000px;\"></div><div style=\"position: absolute; width: 100%; z-index: 2; left: 0px; top: 0px;\"><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div><div style=\"background-color: black; color: white; padding: 1em;\">test</div></div></div>`
+    );
+  });
 });

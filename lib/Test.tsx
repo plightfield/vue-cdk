@@ -7,7 +7,6 @@ import CB from "./global/clipboard.spec";
 import VR from "./scrolling/viewportRuler.spec";
 import SB from "./scrolling/scrollable.spec";
 import ACCORDION from "./accordion/accordion.spec";
-import VS from "./scrolling/VirtualScroll.spec";
 import TV from "./table/tableVirtual.spec";
 import TR from "./tree/TreeNode.spec";
 
@@ -32,8 +31,6 @@ export default defineComponent({
         <SB />
         <h2>accordion</h2>
         <ACCORDION />
-        <h2>virtual scroll</h2>
-        <VS />
         <h2>virtual table</h2>
         <TV />
         <h2>tree</h2>
