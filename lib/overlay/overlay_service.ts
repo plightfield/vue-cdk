@@ -17,7 +17,14 @@ export class OverlayService {
   constructor(private hostElement: HTMLElement, private body: HTMLElement) { }
 
   create(config: OverlayConfig) {
-    return new OverlayState(config, this.body);
+    return new OverlayState({
+      hasBackdrop: config.hasBackdrop ?? true,
+      backdropClose: config.backdropClose ?? true,
+      backdropClick: config.backdropClick ?? null,
+      strategy: config.strategy,
+      backgroundClass: config.backgroundClass ?? '',
+      backgroundBlock: config.backgroundBlock ?? false,
+    }, this.body);
   }
 
   createPositionStrategy(type: 'global'): GlobalPositionStrategy;

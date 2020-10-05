@@ -1,3 +1,4 @@
+import { config } from 'rxjs';
 import {
   defineComponent,
   ref,
@@ -22,7 +23,7 @@ export class OverlayState {
   private readonly originOverflow = this.body.style.overflow;
 
   constructor(
-    private readonly config: OverlayConfig,
+    private readonly config: Required<OverlayConfig>,
     private body: HTMLElement,
   ) {
     this.element = this.render();
@@ -52,19 +53,25 @@ export class OverlayState {
           }
         };
         const containerClass = that._getContainerClass();
-        const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({ containerStyle: {}, positionedStyle: {} });
+        const styles = reactive<{ containerStyle: CSSProperties, positionedStyle: CSSProperties }>({
+          containerStyle: {},
+          positionedStyle: {}
+        });
         let originDisplay = '';
 
         onMounted(() => {
           const current = that.config.strategy.setup();
-          watch(current.positionedStyle, (value) => {
-            styles.positionedStyle = current.positionedStyle.value;
-          });
           styles.containerStyle = current.containerStyle;
           styles.positionedStyle = current.positionedStyle.value;
 
           originDisplay = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
+          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'unset' : 'none';
+
+
+          watch(current.positionedStyle, (value) => {
+            styles.positionedStyle = current.positionedStyle.value;
+          });
         });
 
         onUnmounted(() => {
@@ -81,17 +88,15 @@ export class OverlayState {
           }
         });
 
-        return () => {
-          return (
-            <Teleport to="#vue-cdk-overlay">
-              <div style={styles.containerStyle} class={containerClass} onClick={click}>
-                <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
-                  {renderSlot(ctx.slots, 'default')}
-                </div>
+        return () => (
+          <Teleport to="#vue-cdk-overlay">
+            <div style={styles.containerStyle} class={containerClass} onClick={click}>
+              <div style={styles.positionedStyle} onClick={event => event.cancelBubble = true}>
+                {renderSlot(ctx.slots, 'default')}
               </div>
-            </Teleport>
-          );
-        }
+            </div>
+          </Teleport>
+        );
       }
     });
   }
