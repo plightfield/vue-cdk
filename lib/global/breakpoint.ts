@@ -20,13 +20,14 @@ const breakPoints = {
 export default class {
   span = ref<"xs" | "s" | "m" | "l" | "xl">("m");
   direction = ref<"portrait" | "landscape">("landscape");
-  queryMedia = (query: string, cb: (val: boolean) => void) => {
+  queryMedia = (top: any, query: string, cb: (val: boolean) => void) => {
     // get media list
     let mql: MediaQueryList | null = null;
     const handler = (e: any) => {
       cb(e.matches);
     };
-    mql = window.matchMedia(query);
+    mql = top?.matchMedia?.(query);
+    if (!mql) return;
     cb(mql.matches);
     mql.addEventListener("change", handler);
     onBeforeUnmount(() => {
@@ -38,8 +39,9 @@ export default class {
 
   constructor() {
     if (!inject(platformToken)!.BROWSER) return;
+    const { TOP } = inject(platformToken)!;
     for (let key in breakPoints) {
-      this.queryMedia((breakPoints as any)[key], (e) => {
+      this.queryMedia(TOP, (breakPoints as any)[key], (e) => {
         if (e) {
           switch (key) {
             case "xs":

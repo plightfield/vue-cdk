@@ -25,6 +25,8 @@ export default class Platform {
     ? document.body || document.documentElement || null
     : null;
 
+  readonly TOP = this.BROWSER ? window : null;
+
   readonly EDGE: boolean = this.BROWSER && /(edge)/i.test(navigator.userAgent);
 
   readonly TRIDENT: boolean =
@@ -32,7 +34,7 @@ export default class Platform {
 
   readonly BLINK: boolean =
     this.BROWSER &&
-    !!((window as any).chrome || hasV8BreakIterator) &&
+    !!((this.TOP as any).chrome || hasV8BreakIterator) &&
     typeof CSS !== "undefined" &&
     !this.EDGE &&
     !this.TRIDENT;
@@ -47,7 +49,7 @@ export default class Platform {
   readonly IOS: boolean =
     this.BROWSER &&
     /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-    !("MSStream" in window);
+    !("MSStream" in (this.TOP as any));
 
   readonly FIREFOX: boolean =
     this.BROWSER && /firefox|minefield/i.test(navigator.userAgent);
