@@ -2,13 +2,13 @@ import { OverlayProps } from "../overlay_props";
 import { ConnectionPositionPair } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, ComponentPublicInstance, CSSProperties, isRef, ref, Ref } from 'vue';
+import { ComponentInternalInstance, ComponentPublicInstance, CSSProperties, isRef, onMounted, ref, Ref } from 'vue';
 interface Point {
   x: number;
   y: number;
 }
 
-export type FlexiblePositionStrategyOrigin = Element | Ref<Element | ComponentPublicInstance | undefined> | (Point & {
+export type FlexiblePositionStrategyOrigin = Element | Ref<Element | undefined> | (Point & {
   width?: number;
   height?: number;
 });
@@ -48,7 +48,6 @@ export class FlexiblePositionStrategy implements PositionStrategy {
   ) { }
 
   setup(): OverlayProps {
-
     const originRect = this._getOriginRect();
 
     // calculate the origin point
@@ -192,12 +191,10 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     }
 
     if (isRef(origin)) {
+      console.log('target', (this._origin as any).value.$el);
+
       if (origin.value instanceof Element) {
         return origin.value.getBoundingClientRect();
-      } else if (origin.value && origin.value.$el instanceof Element) {
-        // return origin.value?.$el
-        // TODO: Get the component's rect
-        return origin.value.$el.getBoundingClientRect();
       } else {
         return {
           top: 0,

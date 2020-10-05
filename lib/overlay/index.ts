@@ -8,7 +8,6 @@ export * from './overlay_config';
 export * from './overlay_props';
 export * from './overlay_service';
 export * from './overlay_state';
-export * from './use_overlay';
 
 export const overlayToken = getClassToken(OverlayService);
 

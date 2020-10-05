@@ -1,8 +1,6 @@
-
-import { defineComponent, ref, inject } from "vue";
+import { mount, VueWrapper } from "@vue/test-utils";
+import { defineComponent, ref, inject} from "vue";
 import { overlayToken } from '.';
-import { FlexiblePositionStrategy } from "./position/flexible_position_strategy";
-import { GlobalPositionStrategy } from "./position/global_position_strategy";
 export default defineComponent({
   name: 'overlay-test',
   setup(_, ctx) {
@@ -27,6 +25,7 @@ export default defineComponent({
       flexibleOverlayState2.attach();
     };
 
+
     return () => (
       <>
         <button onClick={click} style="display: block;" class="">click me</button>
@@ -46,4 +45,16 @@ export default defineComponent({
       </>
     );
   }
+});
+
+
+
+let compo: VueWrapper<any>;
+beforeEach(() => {
+  compo = mount(OverlayTester);
+});
+describe("cdk-virtual-scroll", () => {
+  it("will mount successfully", () => {
+    expect(compo).toBeTruthy();
+  });
 });

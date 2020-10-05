@@ -2,7 +2,6 @@ import { defineComponent } from "vue";
 import BIDI from "./global/bidirection.spec";
 import BP from "./global/breakpoint.spec";
 import PLAT from "./global/platform.spec";
-import OVERLAY from "./overlay/overlay.spec";
 import CB from "./global/clipboard.spec";
 import VR from "./scrolling/viewportRuler.spec";
 import SB from "./scrolling/scrollable.spec";
