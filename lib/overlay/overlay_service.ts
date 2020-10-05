@@ -1,4 +1,3 @@
-import { inject, InjectionKey } from "vue";
 import { OverlayState } from "./overlay_state";
 import { OverlayConfig } from "./overlay_config";
 import { GlobalPositionStrategy } from "./position/global_position_strategy";
@@ -6,7 +5,6 @@ import {
   FlexiblePositionStrategy,
   FlexiblePositionStrategyOrigin,
 } from "./position/flexible_position_strategy";
-import { platformToken } from "../global";
 
 /**
  * @description
