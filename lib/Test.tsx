@@ -8,6 +8,7 @@ import SB from "./scrolling/scrollable.spec";
 import ACCORDION from "./accordion/accordion.spec";
 import TV from "./table/tableVirtual.spec";
 import TR from "./tree/TreeNode.spec";
+import OVERLAY from './overlay/overlay.spec';
 
 export default defineComponent({
   name: "test",

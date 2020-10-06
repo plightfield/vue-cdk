@@ -1,10 +1,10 @@
 import { mount, VueWrapper } from "@vue/test-utils";
 import { defineComponent, ref, inject} from "vue";
-import { overlayToken } from '.';
+import { overlayKey } from './index';
 const OverlayTester = defineComponent({
   name: 'overlay-spec',
   setup(_, ctx) {
-    const service = inject(overlayToken)!;
+    const service = inject(overlayKey)!;
     const target = ref<Element>();
 
     const globalOverlayState = service.create({ 

@@ -10,7 +10,7 @@ export * from './overlay_state';
 export const overlayKey = getClassToken(OverlayService);
 
 export const overlayPlugin = {
-  install(app: App) {
+  install(app: App, ...options: any[]) {
     app.provide(overlayKey, new OverlayService(document));
   }
 }
