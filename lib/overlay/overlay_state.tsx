@@ -1,4 +1,3 @@
-import { config } from 'rxjs';
 import {
   defineComponent,
   ref,
@@ -66,11 +65,10 @@ export class OverlayState {
 
           originDisplay = styles.containerStyle.display!;
           styles.containerStyle.display = 'none';
-          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'unset' : 'none';
-
+          styles.containerStyle.pointerEvents = that.config.hasBackdrop ? 'auto' : 'none';
 
           watch(current.positionedStyle, (value) => {
-            styles.positionedStyle = current.positionedStyle.value;
+            styles.positionedStyle = value;
           });
         });
 

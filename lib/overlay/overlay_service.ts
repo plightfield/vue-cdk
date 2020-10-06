@@ -5,6 +5,7 @@ import {
   FlexiblePositionStrategy,
   FlexiblePositionStrategyOrigin,
 } from "./position/flexible_position_strategy";
+import { provide } from 'vue';
 
 /**
  * @description
@@ -15,17 +16,26 @@ import {
  * @interface OverlayService
  */
 export class OverlayService {
-  constructor(private hostElement: HTMLElement, private body: HTMLElement) {}
+
+  constructor(private document: Document) {
+    let div = document.getElementById('vue-cdk-overlay');
+    if (!div) {
+      div = document.createElement('div');
+      div.id = 'vue-cdk-overlay';
+      div.className = 'vue-cdk-overlay-container';
+      document.body.append(div);
+    }
+  }
 
   create(config: OverlayConfig) {
     return new OverlayState({
-      hasBackdrop: config.hasBackdrop ?? true,
-      backdropClose: config.backdropClose ?? true,
-      backdropClick: config.backdropClick ?? null,
+      hasBackdrop: config.hasBackdrop || true,
+      backdropClose: config.backdropClose || true,
+      backdropClick: config.backdropClick || null,
       strategy: config.strategy,
-      backgroundClass: config.backgroundClass ?? '',
-      backgroundBlock: config.backgroundBlock ?? false,
-    }, this.body);
+      backgroundClass: config.backgroundClass || '',
+      backgroundBlock: config.backgroundBlock || false,
+    }, this.document.body);
   }
 
   createPositionStrategy(type: "global"): GlobalPositionStrategy;

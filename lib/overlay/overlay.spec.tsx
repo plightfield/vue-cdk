@@ -1,8 +1,8 @@
 import { mount, VueWrapper } from "@vue/test-utils";
 import { defineComponent, ref, inject} from "vue";
 import { overlayToken } from '.';
-export default defineComponent({
-  name: 'overlay-test',
+const OverlayTester = defineComponent({
+  name: 'overlay-spec',
   setup(_, ctx) {
     const service = inject(overlayToken)!;
     const target = ref<Element>();
@@ -47,7 +47,7 @@ export default defineComponent({
   }
 });
 
-
+export default OverlayTester;
 
 let compo: VueWrapper<any>;
 beforeEach(() => {
