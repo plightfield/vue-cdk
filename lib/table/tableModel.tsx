@@ -1,4 +1,4 @@
-import { Component, defineComponent, provide } from "vue";
+import { Component, defineComponent, provide, Ref } from "vue";
 import { markDirty } from "../tools";
 
 type TdRender<T> = (item: T, index: number) => JSX.Element;
@@ -35,12 +35,12 @@ export default class<T extends { [key: string]: any }> {
 
   // reactive
   mark: () => void;
-  dirty: null | undefined;
+  dirty: Ref<null | undefined>;
 
   // change order
-  currentOrderKey: string;
+  currentOrderKey: string = "id";
   changeOrder = (key: string, desc = true) => {
-    this.displayColumns.sort((pre, next) => {
+    this.displayColumns.sort((pre: any, next: any) => {
       if (pre[key] > next[key]) {
         return desc ? -1 : 1;
       } else if (pre[key] == next[key]) {
@@ -48,6 +48,7 @@ export default class<T extends { [key: string]: any }> {
       } else if (pre[key] < next[key]) {
         return desc ? 1 : -1;
       }
+      return 0;
     });
     this.currentOrderKey = key;
     this.mark();
@@ -59,7 +60,7 @@ export default class<T extends { [key: string]: any }> {
    */
   toggleSomeContent = (dataIndexs: string[], show = true) => {
     for (let item of this.columns) {
-      if (dataIndexs.includes(item.dataIndex)) {
+      if (dataIndexs.includes(item.dataIndex || "")) {
         item.hidden = show;
       }
     }

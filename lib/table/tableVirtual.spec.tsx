@@ -1,6 +1,6 @@
 import VirtualScroll from "../scrolling/virtualScroll";
 import { defineComponent } from "vue";
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import VirtualContainer from "../scrolling/VirtualContainer";
 
 export default defineComponent({

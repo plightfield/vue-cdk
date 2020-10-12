@@ -5,18 +5,13 @@ export type HorizontalConnectionPos = 'left' | 'center' | 'right';
 export type VerticalConnectionPos = 'top' | 'center' | 'bottom';
 
 
-/** A connection point on the origin element. */
-export interface OriginConnectionPosition {
+
+export interface ConnectionPosition {
   originX: HorizontalConnectionPos;
   originY: VerticalConnectionPos;
-}
-
-/** A connection point on the overlay element. */
-export interface OverlayConnectionPosition {
   overlayX: HorizontalConnectionPos;
   overlayY: VerticalConnectionPos;
 }
-
 
 /** The points of the origin element and the overlay element to connect. */
 export class ConnectionPositionPair {
@@ -30,8 +25,7 @@ export class ConnectionPositionPair {
   overlayY: VerticalConnectionPos;
 
   constructor(
-    origin: OriginConnectionPosition,
-    overlay: OverlayConnectionPosition,
+    position: ConnectionPosition,
     /** Offset along the X axis. */
     public offsetX?: number,
     /** Offset along the Y axis. */
@@ -39,10 +33,10 @@ export class ConnectionPositionPair {
     /** Class(es) to be applied to the panel while this position is active. */
     public panelClass?: string | string[]) {
 
-    this.originX = origin.originX;
-    this.originY = origin.originY;
-    this.overlayX = overlay.overlayX;
-    this.overlayY = overlay.overlayY;
+    this.originX = position.originX;
+    this.originY = position.originY;
+    this.overlayX = position.overlayX;
+    this.overlayY = position.overlayY;
   }
 }
 

@@ -1,27 +1,7 @@
-import { App, inject } from "vue";
-import { OverlayService } from "./overlay_service";
-import { CdkAny } from '../types';
-import { getClassToken } from '../tools';
-import { platformToken } from '../global';
+import { App } from "vue";
 
-export * from './overlay_config';
-export * from './overlay_props';
-export * from './overlay_service';
-export * from './overlay_state';
-export * from './use_overlay';
+export * from './overlay';
+export * from './position/position_pair';
+export * from './position/global_position_strategy';
+export * from './position/flexible_position_strategy';
 
-export const overlayToken = getClassToken(OverlayService);
-
-export const overlayPlugin = {
-  install(app: App, ...options: CdkAny[]) {
-    // only once
-    let div = document.getElementById('vue-cdk-overlay');
-    if (!div) {
-      div = document.createElement('div');
-      div.id = 'vue-cdk-overlay';
-      div.className = 'vue-cdk-overlay-container';
-      document.body.append(div);
-    }
-    app.provide(overlayToken, new OverlayService(div, document.body));
-  }
-}

@@ -47,7 +47,7 @@ export default class {
   nodeRef = ref<HTMLElement | null>(null);
   scrollCb: (e: Event) => void = () => {};
   private body = inject(platformToken)!.BODY;
-  private scrollAxisType: ScrollAxisType;
+  private scrollAxisType?: ScrollAxisType;
   private handleScroll = (e: Event) => {
     this.scrollCb(e);
   };
