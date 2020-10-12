@@ -1,13 +1,19 @@
-import { OverlayProps } from '../overlay_props';
+import { OverlayProps } from '../overlay';
 
+export class PositionStrategy {
+  setup(): OverlayProps | undefined {
+    return ;
+  }
 
+  apply?(overlayWrapper: Element): void {
 
-export interface PositionStrategy {
-  setup(): OverlayProps;
+  }
 
-  attach?(): void;
+  disapply?(): void {
 
-  detach?(): void;
+  }
 
-  dispose(): void;
+  dispose(): void {
+
+  }
 }

@@ -25,5 +25,5 @@ export default function () {
   // ! platform first
   provide(breakpointToken, new Breakpoint());
   provide(bidirectionToken, new Bidirection());
-  provide(clipboardToken, new Clipboard());
+  provide(clipboardToken, new Clipboard());  
 }

@@ -15,6 +15,13 @@ export default defineComponent({
           { label: "test", content: "tttttttt" },
           { label: "test", content: "tttttttt" },
           { label: "test", content: "tttttttt" },
+          { 
+            label: "test2", 
+            content: '111', 
+            children: [
+              {label: 'test3', content: 'tttttttt'}
+            ] 
+          }
         ],
       },
     ];
