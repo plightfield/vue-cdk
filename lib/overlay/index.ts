@@ -1,16 +1,7 @@
 import { App } from "vue";
-import { OverlayService } from "./overlay_service";
-import { getClassToken } from '../tools';
 
-export * from './overlay_config';
-export * from './overlay_props';
-export * from './overlay_service';
-export * from './overlay_state';
+export * from './overlay';
+export * from './position/position_pair';
+export * from './position/global_position_strategy';
+export * from './position/flexible_position_strategy';
 
-export const overlayKey = getClassToken(OverlayService);
-
-export const overlayPlugin = {
-  install(app: App, ...options: any[]) {
-    app.provide(overlayKey, new OverlayService(document));
-  }
-}

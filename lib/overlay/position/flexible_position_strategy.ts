@@ -1,8 +1,8 @@
-import { OverlayProps } from "../overlay_props";
-import { ConnectionPositionPair } from "./position_pair";
+import { ConnectionPosition, ConnectionPositionPair, HorizontalConnectionPos, VerticalConnectionPos } from "./position_pair";
 import { PositionStrategy } from "./position_strategy";
 import { coerceCssPixelValue } from '../../coercion';
-import { ComponentInternalInstance, ComponentPublicInstance, CSSProperties, isRef, onMounted, ref, Ref } from 'vue';
+import { CSSProperties, isRef, ref, Ref } from 'vue';
+import { OverlayProps } from '../overlay';
 interface Point {
   x: number;
   y: number;
@@ -21,59 +21,31 @@ export type FlexiblePositionStrategyOrigin = Element | Ref<Element | undefined> 
  * @export
  * @class FlexiblePositionStrategy
  */
-export class FlexiblePositionStrategy implements PositionStrategy {
-
-  private _width: number = 100;
-  private _height: number = 100;
+export class FlexiblePositionStrategy extends PositionStrategy {
 
   private _positionPair: ConnectionPositionPair = new ConnectionPositionPair({
     originX: 'left',
     originY: 'bottom',
-  }, {
     overlayX: 'left',
     overlayY: 'top',
   });
 
-  private currentPositionedStyle = ref<CSSProperties>({});
-
-
-  
   private subscribe?: () => void;
 
   private isVisible = false;
 
+  private positionedStyle = ref<CSSProperties>({});
+
   constructor(
     private _origin: FlexiblePositionStrategyOrigin,
-    private window: Window, 
-  ) { }
+    private window: Window,
+  ) {
+    super();
+   }
 
   setup(): OverlayProps {
-    const originRect = this._getOriginRect();
-
-    // calculate the origin point
-    const originPoint = this._getOriginPoint(originRect, this._positionPair);
-
-    // calculate the overlay anchor point
-    const point = this._getOverlayPoint(originPoint, this._positionPair);
-
-    // set the current position style's value.
-    // the current position style is a 'ref'.
-    this.currentPositionedStyle.value = {
-      position: "absolute",
-      left: coerceCssPixelValue(point.x),
-      top: coerceCssPixelValue(point.y),
-      width: coerceCssPixelValue(this.width),
-      height: coerceCssPixelValue(this.height),
-    };
-
-    // at last, we need to caculate the position when
-    // scrolling.
-    this.caculateScroll(this.currentPositionedStyle, point);
-
-    // why not just return a stream???
-    // prefer using rxjs...
     return {
-      positionedStyle: this.currentPositionedStyle,
+      positionedStyle: this.positionedStyle,
       containerStyle: {
         position: 'fixed',
         top: '0',
@@ -84,13 +56,16 @@ export class FlexiblePositionStrategy implements PositionStrategy {
     };
   }
 
-  attach(): void {
+  apply(overlayWrapper: Element): void {
     this.isVisible = true;
-    this.subscribe?.();
+    this._calculatePosition(overlayWrapper);
   }
 
-  detach(): void {
+  disapply(): void {
     this.isVisible = false;
+    if (this.subscribe) {
+      this.window.removeEventListener('scroll', this.subscribe);
+    }
   }
 
   dispose(): void {
@@ -117,42 +92,72 @@ export class FlexiblePositionStrategy implements PositionStrategy {
    * one is Overlay.
    * @param value New position pair.
    */
-  positionPair(value: ConnectionPositionPair) {
-    this._positionPair = value;
+  positionPair(
+    originX: HorizontalConnectionPos,
+    originY: VerticalConnectionPos,
+    overlayX: HorizontalConnectionPos,
+    overlayY: VerticalConnectionPos
+  ): this;
+  positionPair(position: ConnectionPosition): this;
+  positionPair(value: ConnectionPositionPair): this;
+  positionPair(...values: any[]): this {
+    if (values[0] instanceof ConnectionPositionPair) {
+      this._positionPair = values[0];
+    } else if (typeof values[0] === 'object') {
+      this._positionPair = new ConnectionPositionPair(values[0]);
+    } else {
+      this._positionPair = new ConnectionPositionPair(
+        {
+          originX: values[0],
+          originY: values[1],
+          overlayX: values[2],
+          overlayY: values[3],
+        }
+      )
+    }
     return this;
   }
 
-  /**
-   * Sets the height of the overlay.
-   * @param height New height.
-   */
-  height(height: number): this {
-    this._height = height;
-    return this;
+  private _calculatePosition(overlayWrapper: Element):void {
+    // get overlay rect
+    (overlayWrapper as HTMLElement).style.display = 'flex';
+    const rect = overlayWrapper.getBoundingClientRect();
+    const originRect = this._getOriginRect();
+
+    // calculate the origin point
+    const originPoint = this._getOriginPoint(originRect, this._positionPair);
+
+    // calculate the overlay anchor point
+    const point = this._getOverlayPoint(originPoint, this._positionPair, rect);
+
+    // set the current position style's value.
+    // the current position style is a 'ref'.
+    this.positionedStyle.value = {
+      position: 'absolute',
+      left: coerceCssPixelValue(point.x),
+      top: coerceCssPixelValue(point.y),
+      width: coerceCssPixelValue(rect.width),
+      height: coerceCssPixelValue(rect.height),
+    };
+
+    // at last, we need to caculate the position when
+    // scrolling.
+    this.caculateScroll(this.positionedStyle, point);
   }
 
-  /**
-   * Sets the width of the overlay.
-   * @param width New width.
-   */
-  width(width: number): this {
-    this._width = width;
-    return this;
-  }
-
-  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair): Point {
+  private _getOverlayPoint(originPoint: Point, position: ConnectionPositionPair, overlayRect: DOMRect): Point {
     let x: number;
     if (position.overlayX == 'center') {
-      x = originPoint.x - this._width / 2;
+      x = originPoint.x - overlayRect.width / 2;
     } else {
-      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - this._width);
+      x = position.overlayX == 'left' ? originPoint.x : (originPoint.x - overlayRect.width);
     }
 
     let y: number;
     if (position.overlayY == 'center') {
-      y = originPoint.y - (this._height / 2);
+      y = originPoint.y - (overlayRect.height / 2);
     } else {
-      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - this._height);
+      y = position.overlayY == 'top' ? originPoint.y : (originPoint.y - overlayRect.height);
     }
 
     return { x, y };

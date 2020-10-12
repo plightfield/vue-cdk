@@ -1,5 +1,5 @@
 import { CSSProperties, reactive, ref, Ref } from "vue";
-import { OverlayProps } from "../overlay_props";
+import { OverlayProps } from "../overlay";
 import { PositionStrategy } from "./position_strategy";
 
 
@@ -12,7 +12,7 @@ import { PositionStrategy } from "./position_strategy";
  * @export
  * @class GlobalPositionStrategy
  */
-export class GlobalPositionStrategy implements PositionStrategy {
+export class GlobalPositionStrategy extends PositionStrategy {
   private _cssPosition: 'static' | 'absolute' | 'fixed' | 'relative' = 'static';
   private _topOffset: string = '';
   private _bottomOffset: string = '';
